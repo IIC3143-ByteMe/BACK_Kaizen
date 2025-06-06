@@ -4,11 +4,14 @@ from google import genai
 from dotenv import load_dotenv
 import os
 
+from routers import user_router
+
 load_dotenv()
 gemini_api = os.getenv("GEMINI_API")
 gemini_client = genai.Client(api_key=gemini_api)
 
 app = FastAPI()
+app.include_router(user_router.router)
 
 
 @app.get("/")
@@ -18,6 +21,7 @@ def read_root():
         contents="Explain how AI works in a few words",
     )
     return {"Hello": response.text}
+
 
 
 @app.get("/items/{item_id}")
