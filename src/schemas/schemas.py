@@ -1,52 +1,50 @@
-from typing import Optional
+# src/schemas/schemas.py
+
+from typing import List, Optional
 from datetime import datetime
-from pydantic import BaseModel, ConfigDict, EmailStr
+from pydantic import BaseModel, EmailStr, Field, ConfigDict, field_serializer
 from enum import Enum
 from beanie import PydanticObjectId
-
 
 # ----- ENUM PARA ROLES -----
 class UserRole(str, Enum):
     USER = "user"
     ADMIN = "admin"
 
-
-# ----- CREACIÓN DE USUARIO -----
+# ----- MODELOS DE REQUEST -----
 class UserCreate(BaseModel):
     email: EmailStr
     password: str
     full_name: Optional[str] = None
-
 
 class AdminCreate(BaseModel):
     email: EmailStr
     password: str
     full_name: Optional[str] = None
 
-
-# ----- SALIDA DE USUARIO -----
+# ----- MODEL CONFIG -----
 class UserOut(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
-    id: PydanticObjectId
+    id: PydanticObjectId = Field(..., alias="_id")
     email: EmailStr
     full_name: Optional[str]
     role: UserRole
     created_at: datetime
 
+    @field_serializer("id")
+    def serialize_id(self, v):
+        return str(v)
 
-# ----- TOKEN JWT -----
 class Token(BaseModel):
     access_token: str
     token_type: str
-
 
 class TokenData(BaseModel):
     user_id: Optional[str] = None
     role: Optional[UserRole] = None
 
-
-# ----- CREACIÓN DE HÁBITO -----
+# ----- HABITS SCHEMAS -----
 class HabitCreate(BaseModel):
     title: str
     description: Optional[str] = None
@@ -61,8 +59,6 @@ class HabitCreate(BaseModel):
     reminders: str
     ikigai_category: str
 
-
-# ----- ACTUALIZACIÓN DE HÁBITO -----
 class HabitUpdate(BaseModel):
     title: Optional[str] = None
     description: Optional[str] = None
@@ -77,12 +73,10 @@ class HabitUpdate(BaseModel):
     reminders: Optional[str] = None
     ikigai_category: Optional[str] = None
 
-
-# ----- SALIDA DE HÁBITO -----
 class HabitOut(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
-    id: PydanticObjectId
+    id: PydanticObjectId = Field(..., alias="_id")
     owner_id: str
     title: str
     description: Optional[str]
@@ -98,59 +92,53 @@ class HabitOut(BaseModel):
     ikigai_category: str
     created_at: datetime
 
-    class Config:
-        allow_population_by_field_name = True
-        orm_mode = True
+    @field_serializer("id")
+    def serialize_id(self, v):
+        return str(v)
 
-
-# ----- REGISTRO DIARIO DE HÁBITO -----
+# ----- DAILY LOG SCHEMAS -----
 class DailyHabitLogCreate(BaseModel):
     habit_id: str
     date: datetime
     completed: bool = False
     notes: Optional[str] = None
 
-
 class DailyHabitLogUpdate(BaseModel):
     completed: Optional[bool] = None
     notes: Optional[str] = None
 
-
 class DailyHabitLogOut(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
-    id: PydanticObjectId
+    id: PydanticObjectId = Field(..., alias="_id")
     user_id: str
     habit_id: str
     date: datetime
     completed: bool
     notes: Optional[str]
 
-    class Config:
-        allow_population_by_field_name = True
-        orm_mode = True
+    @field_serializer("id")
+    def serialize_id(self, v):
+        return str(v)
 
-
-# ----- EDUCACIÓN IKIGAI -----
+# ----- IKIGAI EDUCATION SCHEMAS -----
 class IkigaiEducationCreate(BaseModel):
     title: str
     content: str
 
-
 class IkigaiEducationOut(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
-    id: PydanticObjectId
+    id: PydanticObjectId = Field(..., alias="_id")
     title: str
     content: str
     created_at: datetime
 
-    class Config:
-        allow_population_by_field_name = True
-        orm_mode = True
+    @field_serializer("id")
+    def serialize_id(self, v):
+        return str(v)
 
-
-# ----- PROGRESO DE HÁBITOS (para reporte) -----
+# ----- PROGRESO DE HÁBITOS -----
 class HabitProgress(BaseModel):
     habit_id: str
     total_days: int
