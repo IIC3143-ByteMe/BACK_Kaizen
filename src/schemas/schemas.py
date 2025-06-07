@@ -2,7 +2,7 @@
 
 from typing import Optional, Annotated
 from datetime import datetime
-from pydantic import BaseModel, EmailStr, Field, ConfigDict, field_serializer, Field
+from pydantic import BaseModel, EmailStr, ConfigDict, field_serializer, Field
 from enum import Enum
 
 
