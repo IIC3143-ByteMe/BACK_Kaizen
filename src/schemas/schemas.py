@@ -2,8 +2,9 @@
 
 from typing import List, Optional
 from datetime import datetime
-from pydantic import BaseModel, EmailStr, Field
+from pydantic import BaseModel, EmailStr, Field, ConfigDict
 from enum import Enum
+from beanie import PydanticObjectId
 
 # ----- ENUM (misma definición que en models, pero para validación) -----
 class UserRole(str, Enum):
@@ -22,15 +23,12 @@ class AdminCreate(BaseModel):
     full_name: Optional[str] = None
 
 class UserOut(BaseModel):
-    id: str = Field(..., alias="_id")
+    model_config = ConfigDict(from_attributes=True)
+    id: PydanticObjectId 
     email: EmailStr
     full_name: Optional[str]
     role: UserRole
     created_at: datetime
-
-    class Config:
-        allow_population_by_field_name = True
-        orm_mode = True
 
 # ----- LOGIN (token JWT) -----
 class Token(BaseModel):
@@ -51,15 +49,12 @@ class HabitUpdate(BaseModel):
     description: Optional[str] = None
 
 class HabitOut(BaseModel):
-    id: str = Field(..., alias="_id")
+    model_config = ConfigDict(from_attributes=True)
+    id: PydanticObjectId
     owner_id: str
     title: str
     description: Optional[str]
     created_at: datetime
-
-    class Config:
-        allow_population_by_field_name = True
-        orm_mode = True
 
 # ----- REGISTRO DIARIO DE HÁBITO -----
 class DailyHabitLogCreate(BaseModel):
@@ -73,16 +68,13 @@ class DailyHabitLogUpdate(BaseModel):
     notes: Optional[str] = None
 
 class DailyHabitLogOut(BaseModel):
-    id: str = Field(..., alias="_id")
+    model_config = ConfigDict(from_attributes=True)
+    id: PydanticObjectId
     user_id: str
     habit_id: str
     date: datetime
     completed: bool
     notes: Optional[str]
-
-    class Config:
-        allow_population_by_field_name = True
-        orm_mode = True
 
 # ----- EDUCACIÓN IKIGAI -----
 class IkigaiEducationCreate(BaseModel):
@@ -90,14 +82,11 @@ class IkigaiEducationCreate(BaseModel):
     content: str
 
 class IkigaiEducationOut(BaseModel):
-    id: str = Field(..., alias="_id")
+    model_config = ConfigDict(from_attributes=True)
+    id: PydanticObjectId
     title: str
     content: str
     created_at: datetime
-
-    class Config:
-        allow_population_by_field_name = True
-        orm_mode = True
 
 # ----- PROGRESO DE HÁBITOS (para reporte) -----
 class HabitProgress(BaseModel):
