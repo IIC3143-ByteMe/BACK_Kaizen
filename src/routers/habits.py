@@ -1,8 +1,14 @@
+# src/routers/habits.py
 from fastapi import APIRouter, Depends, HTTPException, status
 from typing import List
 
 from models.models import Habit, DailyHabitLog
-from schemas.schemas import HabitCreate, HabitUpdate, HabitOut, HabitProgress
+from schemas.schemas import (
+    HabitCreate,
+    HabitUpdate,
+    HabitOut,
+    HabitProgress
+)
 from utils.dependencies import get_current_user
 from schemas.schemas import TokenData
 
@@ -40,13 +46,11 @@ async def update_habit(
     habit = await Habit.get(habit_id)
     if not habit:
         raise HTTPException(status_code=404, detail="Hábito no encontrado")
-    # Solo el dueño o admin puede modificarlo
     if habit.owner_id != current_user.user_id and current_user.role != "admin":
         raise HTTPException(status_code=403, detail="Permisos insuficientes")
-    if habit_update.title is not None:
-        habit.title = habit_update.title
-    if habit_update.description is not None:
-        habit.description = habit_update.description
+    update_data = habit_update.dict(exclude_unset=True)
+    for field, value in update_data.items():
+        setattr(habit, field, value)
     await habit.save()
     return HabitOut.from_orm(habit)
 
@@ -74,7 +78,6 @@ async def get_my_progress(current_user: TokenData = Depends(get_current_user)):
     habits = await Habit.find(Habit.owner_id == current_user.user_id).to_list()
     progreso = []
     for habit in habits:
-        # Aplicar múltiples filtros en la llamada a find()
         logs = await DailyHabitLog.find(
             (DailyHabitLog.user_id == current_user.user_id)
             & (DailyHabitLog.habit_id == str(habit.id))

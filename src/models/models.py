@@ -30,6 +30,17 @@ class Habit(Document):
     owner_id: str  # ID del User que creó el hábito
     title: str
     description: Optional[str] = None
+    icon: str
+    color: str
+    grupo: Optional[str] = None
+    type: str
+    goal_period: str
+    goal_value: int
+    goal_value_unit: str
+    task_days: str
+    reminders: str
+    ikigai_category: str
+
     created_at: datetime = Field(default_factory=datetime.utcnow)
 
     class Settings:
