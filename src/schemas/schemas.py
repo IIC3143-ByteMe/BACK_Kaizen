@@ -74,7 +74,10 @@ class HabitUpdate(BaseModel):
     ikigai_category: Optional[str] = None
 
 class HabitOut(BaseModel):
-    model_config = ConfigDict(from_attributes=True)
+    model_config = ConfigDict(
+        from_attributes=True,
+        populate_by_name=True,   # ← add this
+    )
 
     id: PydanticObjectId = Field(..., alias="_id")
     owner_id: str
