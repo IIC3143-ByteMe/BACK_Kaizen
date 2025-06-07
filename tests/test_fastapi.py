@@ -5,10 +5,7 @@ from main import app
 client = TestClient(app)
 
 # Datos de prueba
-TEST_USER = {
-    "email": "pytest_user@example.com",
-    "password": "TestPass123"
-}
+TEST_USER = {"email": "pytest_user@example.com", "password": "TestPass123"}
 
 TEST_HABIT = {
     "title": "PyTest Habit",
@@ -22,8 +19,9 @@ TEST_HABIT = {
     "goal_value_unit": "times",
     "task_days": "Mon,Wed,Fri",
     "reminders": "08:00",
-    "ikigai_category": "Health"
+    "ikigai_category": "Health",
 }
+
 
 @pytest.fixture(scope="module")
 def token():
@@ -36,6 +34,7 @@ def token():
     data = resp.json()
     return data["access_token"]
 
+
 def test_create_habit(token):
     headers = {"Authorization": f"Bearer {token}"}
     # Crear hábito
@@ -47,6 +46,7 @@ def test_create_habit(token):
         assert habit[key] == value
     assert "id" in habit
 
+
 def test_list_habits(token):
     headers = {"Authorization": f"Bearer {token}"}
     resp = client.get("/habits/", headers=headers)
@@ -55,6 +55,7 @@ def test_list_habits(token):
     # Debe haber al menos un hábito con el título de TEST_HABIT
     titles = [h["title"] for h in habits]
     assert TEST_HABIT["title"] in titles
+
 
 def test_progress_initial(token):
     headers = {"Authorization": f"Bearer {token}"}
