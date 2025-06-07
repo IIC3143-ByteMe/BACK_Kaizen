@@ -36,7 +36,7 @@ async def get_my_daily_logs(current_user: TokenData = Depends(get_current_user))
     logs = await DailyHabitLog.find(
         DailyHabitLog.user_id == current_user.user_id
     ).to_list()
-    return [DailyHabitLogOut.from_orm(l) for l in logs]
+    return [DailyHabitLogOut.from_orm(log) for log in logs]
 
 
 # ----- MODIFICAR REGISTRO DIARIO -----
