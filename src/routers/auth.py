@@ -85,7 +85,7 @@ async def login_for_access_token(form_data: Dict[str, str]):
         )
     # Generar token
     access_token_expires = timedelta(
-        minutes=int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", 60))
+        minutes=int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", 3600))
     )
     access_token = create_access_token(
         data={"sub": str(user.id), "role": user.role.value},
