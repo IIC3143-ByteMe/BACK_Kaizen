@@ -3,12 +3,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from typing import List
 
 from models.models import Habit, DailyHabitLog
-from schemas.schemas import (
-    HabitCreate,
-    HabitUpdate,
-    HabitOut,
-    HabitProgress
-)
+from schemas.schemas import HabitCreate, HabitUpdate, HabitOut, HabitProgress
 from utils.dependencies import get_current_user
 from schemas.schemas import TokenData
 

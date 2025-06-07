@@ -1,13 +1,15 @@
-from typing import List, Optional
+from typing import Optional
 from datetime import datetime
-from pydantic import BaseModel, ConfigDict, EmailStr, Field, field_serializer
+from pydantic import BaseModel, ConfigDict, EmailStr
 from enum import Enum
 from beanie import PydanticObjectId
+
 
 # ----- ENUM PARA ROLES -----
 class UserRole(str, Enum):
     USER = "user"
     ADMIN = "admin"
+
 
 # ----- CREACIÓN DE USUARIO -----
 class UserCreate(BaseModel):
@@ -21,6 +23,7 @@ class AdminCreate(BaseModel):
     password: str
     full_name: Optional[str] = None
 
+
 # ----- SALIDA DE USUARIO -----
 class UserOut(BaseModel):
     model_config = ConfigDict(from_attributes=True)
@@ -31,6 +34,7 @@ class UserOut(BaseModel):
     role: UserRole
     created_at: datetime
 
+
 # ----- TOKEN JWT -----
 class Token(BaseModel):
     access_token: str
@@ -40,6 +44,7 @@ class Token(BaseModel):
 class TokenData(BaseModel):
     user_id: Optional[str] = None
     role: Optional[UserRole] = None
+
 
 # ----- CREACIÓN DE HÁBITO -----
 class HabitCreate(BaseModel):
@@ -56,6 +61,7 @@ class HabitCreate(BaseModel):
     reminders: str
     ikigai_category: str
 
+
 # ----- ACTUALIZACIÓN DE HÁBITO -----
 class HabitUpdate(BaseModel):
     title: Optional[str] = None
@@ -70,6 +76,7 @@ class HabitUpdate(BaseModel):
     task_days: Optional[str] = None
     reminders: Optional[str] = None
     ikigai_category: Optional[str] = None
+
 
 # ----- SALIDA DE HÁBITO -----
 class HabitOut(BaseModel):
