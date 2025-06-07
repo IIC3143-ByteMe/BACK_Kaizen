@@ -74,6 +74,7 @@ async def get_my_progress(current_user: TokenData = Depends(get_current_user)):
     habits = await Habit.find(Habit.owner_id == current_user.user_id).to_list()
     progreso = []
     for habit in habits:
+        # Aplicar múltiples filtros en la llamada a find()
         logs = await DailyHabitLog.find(
             (DailyHabitLog.user_id == current_user.user_id)
             & (DailyHabitLog.habit_id == str(habit.id))

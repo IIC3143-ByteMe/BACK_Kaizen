@@ -2,8 +2,9 @@
 
 from typing import Optional
 from datetime import datetime
-from pydantic import BaseModel, EmailStr, Field
+from pydantic import BaseModel, EmailStr, Field, ConfigDict
 from enum import Enum
+from beanie import PydanticObjectId
 
 
 # ----- ENUM (misma definición que en models, pero para validación) -----
@@ -26,7 +27,8 @@ class AdminCreate(BaseModel):
 
 
 class UserOut(BaseModel):
-    id: str = Field(..., alias="_id")
+    model_config = ConfigDict(from_attributes=True)
+    id: PydanticObjectId 
     email: EmailStr
     full_name: Optional[str]
     role: UserRole
@@ -60,7 +62,8 @@ class HabitUpdate(BaseModel):
 
 
 class HabitOut(BaseModel):
-    id: str = Field(..., alias="_id")
+    model_config = ConfigDict(from_attributes=True)
+    id: PydanticObjectId
     owner_id: str
     title: str
     description: Optional[str]
@@ -85,7 +88,8 @@ class DailyHabitLogUpdate(BaseModel):
 
 
 class DailyHabitLogOut(BaseModel):
-    id: str = Field(..., alias="_id")
+    model_config = ConfigDict(from_attributes=True)
+    id: PydanticObjectId
     user_id: str
     habit_id: str
     date: datetime
@@ -104,7 +108,8 @@ class IkigaiEducationCreate(BaseModel):
 
 
 class IkigaiEducationOut(BaseModel):
-    id: str = Field(..., alias="_id")
+    model_config = ConfigDict(from_attributes=True)
+    id: PydanticObjectId
     title: str
     content: str
     created_at: datetime
