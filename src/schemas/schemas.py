@@ -2,7 +2,7 @@
 
 from typing import Optional
 from datetime import datetime
-from pydantic import BaseModel, EmailStr, Field, ConfigDict
+from pydantic import BaseModel, EmailStr, ConfigDict
 from enum import Enum
 from beanie import PydanticObjectId
 
@@ -28,7 +28,7 @@ class AdminCreate(BaseModel):
 
 class UserOut(BaseModel):
     model_config = ConfigDict(from_attributes=True)
-    id: PydanticObjectId 
+    id: PydanticObjectId
     email: EmailStr
     full_name: Optional[str]
     role: UserRole

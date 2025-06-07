@@ -2,7 +2,6 @@ import os
 from fastapi import APIRouter, HTTPException, status, Depends
 from typing import Dict
 from datetime import timedelta
-import os
 
 from models.models import User
 from schemas.schemas import UserCreate, AdminCreate, UserOut, Token
