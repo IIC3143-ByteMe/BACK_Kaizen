@@ -11,15 +11,14 @@ router = APIRouter(prefix="/habits", tags=["habits"])
 
 
 # ----- CREAR HÁBITO (USER) -----
-@router.post("/", response_model=HabitOut, status_code=status.HTTP_201_CREATED)
+@router.post("/", response_model=HabitOut, status_code=201)
 async def create_habit(
-    habit_in: HabitCreate, current_user: TokenData = Depends(get_current_user)
+    habit_in: HabitCreate,
+    current_user: TokenData = Depends(get_current_user),
 ):
-    new_habit = Habit(
-        owner_id=current_user.user_id,
-        title=habit_in.title,
-        description=habit_in.description,
-    )
+    data = habit_in.dict()
+    data["owner_id"] = current_user.user_id
+    new_habit = Habit(**data)
     await new_habit.insert()
     return HabitOut.from_orm(new_habit)
 
