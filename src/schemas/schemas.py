@@ -1,10 +1,9 @@
 # src/schemas/schemas.py
 
-from typing import Optional
+from typing import Optional, Annotated
 from datetime import datetime
-from pydantic import BaseModel, EmailStr, Field, ConfigDict, field_serializer
+from pydantic import BaseModel, EmailStr, ConfigDict, field_serializer, Field
 from enum import Enum
-from beanie import PydanticObjectId
 
 
 # ----- ENUM PARA ROLES -----
@@ -33,7 +32,7 @@ class UserOut(BaseModel):
         populate_by_name=True,
     )
 
-    id: PydanticObjectId = Field(..., alias="_id")
+    id: Annotated[str, Field(alias="_id")]
     email: EmailStr
     full_name: Optional[str]
     role: UserRole
@@ -91,7 +90,7 @@ class HabitOut(BaseModel):
         populate_by_name=True,  # ← add this
     )
 
-    id: PydanticObjectId = Field(..., alias="_id")
+    id: Annotated[str, Field(alias="_id")]
     owner_id: str
     title: str
     description: Optional[str]
@@ -128,7 +127,7 @@ class DailyHabitLogUpdate(BaseModel):
 class DailyHabitLogOut(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
-    id: PydanticObjectId = Field(..., alias="_id")
+    id: Annotated[str, Field(alias="_id")]
     user_id: str
     habit_id: str
     date: datetime
@@ -149,7 +148,7 @@ class IkigaiEducationCreate(BaseModel):
 class IkigaiEducationOut(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
-    id: PydanticObjectId = Field(..., alias="_id")
+    id: Annotated[str, Field(alias="_id")]
     title: str
     content: str
     created_at: datetime
