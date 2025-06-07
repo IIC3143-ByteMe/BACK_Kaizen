@@ -6,10 +6,12 @@ from beanie import Document
 from pydantic import EmailStr, Field
 from enum import Enum
 
+
 # ----- ENUM PARA ROLES -----
 class UserRole(str, Enum):
     USER = "user"
     ADMIN = "admin"
+
 
 # ----- DOCUMENTO DE USUARIO -----
 class User(Document):
@@ -22,9 +24,10 @@ class User(Document):
     class Settings:
         name = "users"  # nombre de la colección
 
+
 # ----- DOCUMENTO DE HÁBITO -----
 class Habit(Document):
-    owner_id: str            # ID del User que creó el hábito
+    owner_id: str  # ID del User que creó el hábito
     title: str
     description: Optional[str] = None
     created_at: datetime = Field(default_factory=datetime.utcnow)
@@ -32,10 +35,11 @@ class Habit(Document):
     class Settings:
         name = "habits"
 
+
 # ----- DOCUMENTO DE REGISTRO DIARIO DE HÁBITO -----
 class DailyHabitLog(Document):
-    user_id: str              # ID del User que registra
-    habit_id: str             # ID del Habit que está registrando
+    user_id: str  # ID del User que registra
+    habit_id: str  # ID del Habit que está registrando
     date: datetime
     completed: bool = False
     notes: Optional[str] = None
@@ -43,10 +47,11 @@ class DailyHabitLog(Document):
     class Settings:
         name = "daily_habit_logs"
 
+
 # ----- DOCUMENTO DE EDUCACIÓN SOBRE IKIGAI -----
 class IkigaiEducation(Document):
     title: str
-    content: str              # Texto completo
+    content: str  # Texto completo
     created_at: datetime = Field(default_factory=datetime.utcnow)
 
     class Settings:

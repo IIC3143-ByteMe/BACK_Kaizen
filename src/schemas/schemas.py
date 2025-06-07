@@ -1,15 +1,17 @@
 # app/schemas/schemas.py
 
-from typing import List, Optional
+from typing import Optional
 from datetime import datetime
-from pydantic import BaseModel, EmailStr, Field, ConfigDict
+from pydantic import BaseModel, EmailStr, ConfigDict
 from enum import Enum
 from beanie import PydanticObjectId
+
 
 # ----- ENUM (misma definición que en models, pero para validación) -----
 class UserRole(str, Enum):
     USER = "user"
     ADMIN = "admin"
+
 
 # ----- USUARIO -----
 class UserCreate(BaseModel):
@@ -17,36 +19,47 @@ class UserCreate(BaseModel):
     password: str
     full_name: Optional[str] = None
 
+
 class AdminCreate(BaseModel):
     email: EmailStr
     password: str
     full_name: Optional[str] = None
 
+
 class UserOut(BaseModel):
     model_config = ConfigDict(from_attributes=True)
-    id: PydanticObjectId 
+    id: PydanticObjectId
     email: EmailStr
     full_name: Optional[str]
     role: UserRole
     created_at: datetime
+
+    class Config:
+        allow_population_by_field_name = True
+        orm_mode = True
+
 
 # ----- LOGIN (token JWT) -----
 class Token(BaseModel):
     access_token: str
     token_type: str
 
+
 class TokenData(BaseModel):
     user_id: Optional[str] = None
     role: Optional[UserRole] = None
+
 
 # ----- HÁBITO -----
 class HabitCreate(BaseModel):
     title: str
     description: Optional[str] = None
 
+
 class HabitUpdate(BaseModel):
     title: Optional[str] = None
     description: Optional[str] = None
+
 
 class HabitOut(BaseModel):
     model_config = ConfigDict(from_attributes=True)
@@ -56,6 +69,11 @@ class HabitOut(BaseModel):
     description: Optional[str]
     created_at: datetime
 
+    class Config:
+        allow_population_by_field_name = True
+        orm_mode = True
+
+
 # ----- REGISTRO DIARIO DE HÁBITO -----
 class DailyHabitLogCreate(BaseModel):
     habit_id: str
@@ -63,9 +81,11 @@ class DailyHabitLogCreate(BaseModel):
     completed: bool = False
     notes: Optional[str] = None
 
+
 class DailyHabitLogUpdate(BaseModel):
     completed: Optional[bool] = None
     notes: Optional[str] = None
+
 
 class DailyHabitLogOut(BaseModel):
     model_config = ConfigDict(from_attributes=True)
@@ -76,10 +96,16 @@ class DailyHabitLogOut(BaseModel):
     completed: bool
     notes: Optional[str]
 
+    class Config:
+        allow_population_by_field_name = True
+        orm_mode = True
+
+
 # ----- EDUCACIÓN IKIGAI -----
 class IkigaiEducationCreate(BaseModel):
     title: str
     content: str
+
 
 class IkigaiEducationOut(BaseModel):
     model_config = ConfigDict(from_attributes=True)
@@ -87,6 +113,11 @@ class IkigaiEducationOut(BaseModel):
     title: str
     content: str
     created_at: datetime
+
+    class Config:
+        allow_population_by_field_name = True
+        orm_mode = True
+
 
 # ----- PROGRESO DE HÁBITOS (para reporte) -----
 class HabitProgress(BaseModel):
