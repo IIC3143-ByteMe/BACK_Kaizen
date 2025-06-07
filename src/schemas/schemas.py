@@ -24,7 +24,7 @@ class AdminCreate(BaseModel):
 
 # ----- MODEL CONFIG -----
 class UserOut(BaseModel):
-    model_config = ConfigDict(from_attributes=True)
+    model_config = ConfigDict(from_attributes=True, populate_by_name=True,)
 
     id: PydanticObjectId = Field(..., alias="_id")
     email: EmailStr
