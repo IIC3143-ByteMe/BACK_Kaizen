@@ -7,6 +7,7 @@ import uvicorn
 from beanie import init_beanie
 from dotenv import load_dotenv
 from google import genai
+from db.mongodb import db
 import os
 
 # Conexión a MongoDB
@@ -24,10 +25,11 @@ from routers.ikigai import router as ikigai_router
 from routers.admin import router as admin_router
 
 load_dotenv()
-gemini_api = os.getenv("GEMINI_API")
-gemini_client = genai.Client(api_key=gemini_api)
+# gemini_api = os.getenv("GEMINI_API")
+# gemini_client = genai.Client(api_key=gemini_api)
 
 app = FastAPI()
+
 
 @app.get("/")
 def read_root():
