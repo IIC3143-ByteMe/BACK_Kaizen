@@ -5,9 +5,9 @@ from jose import JWTError, jwt
 from schemas.schemas import TokenData
 import os
 
-SECRET_KEY = os.getenv("JWT_SECRET_KEY", "cambia_esto_por_una_clave_segura")
+SECRET_KEY = os.getenv("JWT_SECRET_KEY")
 ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", "1440"))
+ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES"))
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 

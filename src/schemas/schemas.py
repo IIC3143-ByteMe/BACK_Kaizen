@@ -66,7 +66,7 @@ class HabitCreate(BaseModel):
     goal_value_unit: str
     task_days: str
     reminders: str
-    ikigai_category: str
+    ikigai_category: Optional[str] = None
 
 
 class HabitUpdate(BaseModel):
