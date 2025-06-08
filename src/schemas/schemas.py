@@ -2,7 +2,8 @@
 
 from typing import Optional, Annotated
 from datetime import datetime
-from pydantic import BaseModel, EmailStr, ConfigDict, field_serializer, Field
+from bson import ObjectId
+from pydantic import BaseModel, EmailStr, ConfigDict, field_serializer, field_validator, Field
 from enum import Enum
 
 
@@ -32,15 +33,28 @@ class UserOut(BaseModel):
         populate_by_name=True,
     )
 
-    id: str = Field(alias="_id")
+    id: str = Field(
+        alias="_id",
+        title="User ID",
+        description="MongoDB ObjectId, serialized as a string"
+    )
     email: EmailStr
     full_name: Optional[str]
     role: UserRole
     created_at: datetime
 
+    @field_validator("id", mode="before")
+    def _coerce_objectid(cls, v):
+        # before validation: if it's an ObjectId, make it a string
+        if isinstance(v, ObjectId):
+            return str(v)
+        return v  # leave strings (or other) alone
+
     @field_serializer("id")
-    def serialize_id(self, v):
-        return str(v)
+    def _serialize_id(self, v: str) -> str:
+        # this only runs at dump-time
+        return v
+
 
 
 class Token(BaseModel):
@@ -106,6 +120,13 @@ class HabitOut(BaseModel):
     ikigai_category: str
     created_at: datetime
 
+    @field_validator("id", mode="before")
+    def _coerce_objectid(cls, v):
+        # before validation: if it's an ObjectId, make it a string
+        if isinstance(v, ObjectId):
+            return str(v)
+        return v  # leave strings (or other) alone
+
     @field_serializer("id")
     def serialize_id(self, v):
         return str(v)
@@ -134,6 +155,13 @@ class DailyHabitLogOut(BaseModel):
     completed: bool
     notes: Optional[str]
 
+    @field_validator("id", mode="before")
+    def _coerce_objectid(cls, v):
+        # before validation: if it's an ObjectId, make it a string
+        if isinstance(v, ObjectId):
+            return str(v)
+        return v  # leave strings (or other) alone
+
     @field_serializer("id")
     def serialize_id(self, v):
         return str(v)
@@ -152,6 +180,13 @@ class IkigaiEducationOut(BaseModel):
     title: str
     content: str
     created_at: datetime
+
+    @field_validator("id", mode="before")
+    def _coerce_objectid(cls, v):
+        # before validation: if it's an ObjectId, make it a string
+        if isinstance(v, ObjectId):
+            return str(v)
+        return v  # leave strings (or other) alone
 
     @field_serializer("id")
     def serialize_id(self, v):
