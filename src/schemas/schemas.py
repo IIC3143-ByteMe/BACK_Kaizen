@@ -103,7 +103,7 @@ class HabitOut(BaseModel):
     goal_value_unit: str
     task_days: str
     reminders: str
-    ikigai_category: str
+    ikigai_category: Optional[str]
     created_at: datetime
 
     @field_serializer("id")
