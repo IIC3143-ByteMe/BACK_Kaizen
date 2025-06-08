@@ -1,6 +1,6 @@
 annotated-types==0.7.0
 anyio==4.9.0
-bcrypt==4.3.0
+bcrypt==4.0.1
 beanie==1.29.0
 black==25.1.0
 cachetools==5.5.2
@@ -46,6 +46,7 @@ pyflakes==3.3.2
 Pygments==2.19.1
 pymongo==4.13.0
 pytest==8.4.0
+pytest-asyncio==1.0.0
 python-dotenv==1.1.0
 python-jose==3.5.0
 python-multipart==0.0.20
