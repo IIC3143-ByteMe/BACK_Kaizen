@@ -39,7 +39,7 @@ class Habit(Document):
     goal_value_unit: str
     task_days: str
     reminders: str
-    ikigai_category: str
+    ikigai_category: Optional[str] = None
 
     created_at: datetime = Field(default_factory=datetime.utcnow)
 
