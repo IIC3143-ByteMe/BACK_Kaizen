@@ -23,16 +23,19 @@ TEST_HABIT = {
     "ikigai_category": "Health",
 }
 
+
 def test_register_new_user(monkeypatch):
     # Override find_one to return None for this test
     async def fake_find_none(cls, query):
         return None
+
     monkeypatch.setattr(User, "find_one", classmethod(fake_find_none))
 
     # And override insert() to set an _id
     async def fake_insert(self):
         self._id = "newid123"
         return self
+
     monkeypatch.setattr(User, "insert", fake_insert)
 
     resp = client.post(
@@ -42,7 +45,8 @@ def test_register_new_user(monkeypatch):
     assert resp.status_code == 201
     assert resp.json() == {"_id": "newid123"}
 
-'''
+
+"""
 @pytest.fixture(scope="module")
 def test_register():
     # Registrar usuario
@@ -84,4 +88,4 @@ def test_progress_initial(token):
     # Todos los hábitos deben tener total_days inicial = 0
     for p in progress:
         assert p["total_days"] >= 0
-'''
+"""

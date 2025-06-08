@@ -3,7 +3,14 @@
 from typing import Optional, Annotated
 from datetime import datetime
 from bson import ObjectId
-from pydantic import BaseModel, EmailStr, ConfigDict, field_serializer, field_validator, Field
+from pydantic import (
+    BaseModel,
+    EmailStr,
+    ConfigDict,
+    field_serializer,
+    field_validator,
+    Field,
+)
 from enum import Enum
 
 
@@ -36,7 +43,7 @@ class UserOut(BaseModel):
     id: str = Field(
         alias="_id",
         title="User ID",
-        description="MongoDB ObjectId, serialized as a string"
+        description="MongoDB ObjectId, serialized as a string",
     )
     email: EmailStr
     full_name: Optional[str]
@@ -54,7 +61,6 @@ class UserOut(BaseModel):
     def _serialize_id(self, v: str) -> str:
         # this only runs at dump-time
         return v
-
 
 
 class Token(BaseModel):
