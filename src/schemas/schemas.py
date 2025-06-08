@@ -32,7 +32,7 @@ class UserOut(BaseModel):
         populate_by_name=True,
     )
 
-    id: Annotated[str, Field(alias="_id")]
+    id: str = Field(alias="_id")
     email: EmailStr
     full_name: Optional[str]
     role: UserRole
