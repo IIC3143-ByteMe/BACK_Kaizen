@@ -7,6 +7,7 @@ from beanie import init_beanie
 from dotenv import load_dotenv
 from google import genai
 import os
+from fastapi.middleware.cors import CORSMiddleware
 
 # Conexión a MongoDB
 from db.mongodb import db
@@ -26,6 +27,14 @@ gemini_api = os.getenv("GEMINI_API")
 gemini_client = genai.Client(api_key=gemini_api)
 
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 @app.get("/")
