@@ -81,14 +81,11 @@ class HabitCreate(BaseModel):
     description: Optional[str] = None
     icon: str
     color: str
-    grupo: Optional[str] = None
-    type: str
     goal_period: str
     goal_value: int
     goal_value_unit: str
     task_days: str
     reminders: str
-    ikigai_category: Optional[str] = None
 
 
 class HabitUpdate(BaseModel):
@@ -125,7 +122,6 @@ class HabitOut(BaseModel):
     goal_value_unit: str
     task_days: str
     reminders: str
-    ikigai_category: Optional[str]
     created_at: datetime
 
     @field_validator("id", mode="before")
