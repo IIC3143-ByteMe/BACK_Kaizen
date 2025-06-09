@@ -13,6 +13,8 @@ from pydantic import (
 )
 from enum import Enum
 
+from models.models import ArquetiposIkigai
+
 
 # ----- ENUM PARA ROLES -----
 class UserRole(str, Enum):
@@ -175,16 +177,25 @@ class DailyHabitLogOut(BaseModel):
 
 # ----- IKIGAI EDUCATION SCHEMAS -----
 class IkigaiEducationCreate(BaseModel):
-    title: str
-    content: str
+    arquetipo: Optional[ArquetiposIkigai]
+    amas: Optional[str]
+    bueno: Optional[str]
+    necesita: Optional[str]
+    pagar: Optional[str]
 
 
 class IkigaiEducationOut(BaseModel):
-    model_config = ConfigDict(from_attributes=True)
+    model_config = ConfigDict(
+        from_attributes=True,
+        populate_by_name=True,  # ← add this
+    )
 
     id: Annotated[str, Field(alias="_id")]
-    title: str
-    content: str
+    arquetipo: Optional[ArquetiposIkigai]
+    amas: Optional[str]
+    bueno: Optional[str]
+    necesita: Optional[str]
+    pagar: Optional[str]
     created_at: datetime
 
     @field_validator("id", mode="before")
