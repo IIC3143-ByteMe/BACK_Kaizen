@@ -1,5 +1,4 @@
 from fastapi import APIRouter, Depends, HTTPException, status
-from typing import List
 
 from models.models import IkigaiEducation
 from schemas.schemas import IkigaiEducationCreate, IkigaiEducationOut
@@ -23,12 +22,12 @@ async def create_ikigai_content(
 
 
 # ----- LISTAR TODO EL CONTENIDO (CUALQUIER USUARIO) -----
-@router.get("/", response_model=List[IkigaiEducationOut])
+@router.get("/", response_model=IkigaiEducationOut)
 async def list_ikigai_content(current_user=Depends(get_current_user)):
-    contents = await IkigaiEducation.find(
+    contents = await IkigaiEducation.find_one(
         IkigaiEducation.owner_id == current_user.user_id
-    ).to_list()
-    return [IkigaiEducationOut.from_orm(c) for c in contents]
+    )
+    return IkigaiEducationOut.from_orm(contents)
 
 
 # ----- MODIFICAR CONTENIDO (usuario) -----

@@ -50,6 +50,8 @@ class UserOut(BaseModel):
     email: EmailStr
     full_name: Optional[str]
     role: UserRole
+    streak: int
+    ikigai_quiz_bool: bool
     created_at: datetime
 
     @field_validator("id", mode="before")
