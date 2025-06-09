@@ -218,6 +218,7 @@ class HabitProgress(BaseModel):
     completed_days: int
     completion_rate: float  # porcentaje completado (0.0–100.0)
 
+
 # --- TEMPLATE SCHEMAS ---
 class TemplateCreate(BaseModel):
     title: str
@@ -234,6 +235,7 @@ class TemplateCreate(BaseModel):
     ikigai_category: str
     published: bool
 
+
 class TemplateUpdate(BaseModel):
     title: Optional[str] = None
     description: Optional[str] = None
@@ -248,6 +250,7 @@ class TemplateUpdate(BaseModel):
     reminders: Optional[str] = None
     ikigai_category: Optional[str] = None
     published: Optional[bool] = None
+
 
 class TemplateOut(BaseModel):
     model_config = ConfigDict(
@@ -281,4 +284,3 @@ class TemplateOut(BaseModel):
     @field_serializer("id")
     def serialize_id(self, v):
         return str(v)
-

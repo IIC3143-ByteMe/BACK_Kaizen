@@ -56,7 +56,8 @@ def read_item(item_id: int, q: Union[str, None] = None):
 async def on_startup():
     # Inicializar Beanie con la DB ya conectada
     await init_beanie(
-        database=db, document_models=[User, Habit, DailyHabitLog, IkigaiEducation, HabitTemplate]
+        database=db,
+        document_models=[User, Habit, DailyHabitLog, IkigaiEducation, HabitTemplate],
     )
 
 

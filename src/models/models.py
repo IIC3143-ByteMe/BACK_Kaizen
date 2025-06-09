@@ -82,6 +82,7 @@ class IkigaiEducation(Document):
     class Settings:
         name = "ikigai_education"
 
+
 # ----- TEMPLATE HÁBITO -----
 class HabitTemplate(Document):
     title: str
