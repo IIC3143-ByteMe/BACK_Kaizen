@@ -81,3 +81,23 @@ class IkigaiEducation(Document):
 
     class Settings:
         name = "ikigai_education"
+
+# ----- TEMPLATE HÁBITO -----
+class HabitTemplate(Document):
+    title: str
+    description: str
+    icon: str
+    color: str
+    grupo: Optional[str] = None
+    type: str
+    goal_period: str
+    goal_value: int
+    goal_value_unit: str
+    task_days: str
+    reminders: str
+    ikigai_category: str
+    published: bool = Field(default=False)
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+
+    class Settings:
+        name = "habit_templates"
