@@ -49,16 +49,11 @@ async def update_habit(
     return HabitOut.from_orm(habit)
 
 
-# ----- ELIMINAR HÁBITO (ADMIN) -----
+# ----- ELIMINAR HÁBITO () -----
 @router.delete("/{habit_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_habit(
     habit_id: str, current_user: TokenData = Depends(get_current_user)
 ):
-    # Requiere rol admin
-    if current_user.role != "admin":
-        raise HTTPException(
-            status_code=403, detail="Permisos insuficientes: se requiere admin"
-        )
     habit = await Habit.get(habit_id)
     if not habit:
         raise HTTPException(status_code=404, detail="Hábito no encontrado")
