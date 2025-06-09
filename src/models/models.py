@@ -13,6 +13,14 @@ class UserRole(str, Enum):
     ADMIN = "admin"
 
 
+# ----- ENUM PARA ARQUETIPOS -----
+class ArquetiposIkigai(str, Enum):
+    CONSTANTE = "constante"
+    EXPLORADOR = "explorador"
+    SOCIAL = "social"
+    REFLECIVO = "reflexivo"
+
+
 # ----- DOCUMENTO DE USUARIO -----
 class User(Document):
     email: EmailStr
@@ -61,8 +69,12 @@ class DailyHabitLog(Document):
 
 # ----- DOCUMENTO DE EDUCACIÓN SOBRE IKIGAI -----
 class IkigaiEducation(Document):
-    title: str
-    content: str  # Texto completo
+    owner_id: str  # ID del User que creó el hábito
+    arquetipo: Optional[ArquetiposIkigai] = None
+    amas: Optional[str] = None
+    bueno: Optional[str] = None
+    necesita: Optional[str] = None
+    pagar: Optional[str] = None
     created_at: datetime = Field(default_factory=datetime.utcnow)
 
     class Settings:

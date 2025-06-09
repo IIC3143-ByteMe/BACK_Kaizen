@@ -45,6 +45,29 @@ def init_db():
     yield
     client.drop_database("kaizen_test_db")
 
+def test_register_new_user(monkeypatch):
+    # Override find_one to return None for this test
+    async def fake_find_none(cls, query):
+        return None
+
+    monkeypatch.setattr(User, "find_one", classmethod(fake_find_none))
+
+    # And override insert() to set an _id
+    async def fake_insert(self):
+        self._id = "newid123"
+        return self
+
+    monkeypatch.setattr(User, "insert", fake_insert)
+
+    resp = client.post(
+        "/auth/register",
+        json={"email": "new@mail.com", "password": "secret"},
+    )
+    assert resp.status_code == 201
+    assert resp.json() == {"_id": "newid123"}
+
+
+"""
 @pytest.fixture(scope="module")
 def client():
     """
@@ -192,3 +215,4 @@ def test_ikigai_education_crud(client, admin_token):
     assert r1.status_code == 201
     after = client.get("/ikigai/", headers=headers).json()
     assert len(after) == len(before) + 1
+
