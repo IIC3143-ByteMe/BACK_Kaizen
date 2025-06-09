@@ -29,9 +29,9 @@ async def list_ikigai_content(current_user=Depends(get_current_user)):
     )
     try:
         return IkigaiEducationOut.from_orm(contents)
-    except():
+    except ():
         raise ValueError
-    
+
 
 # ----- MODIFICAR CONTENIDO (usuario) -----
 @router.put("/", response_model=IkigaiEducationOut)
