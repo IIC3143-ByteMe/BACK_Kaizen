@@ -27,6 +27,8 @@ class User(Document):
     hashed_password: str
     full_name: Optional[str] = None
     role: UserRole = UserRole.USER
+    streak: int = 0
+    ikigai_quiz_bool: bool = False
     created_at: datetime = Field(default_factory=datetime.utcnow)
 
     class Settings:
