@@ -21,6 +21,7 @@ from routers.habits import router as habits_router
 from routers.daily_logs import router as daily_logs_router
 from routers.ikigai import router as ikigai_router
 from routers.admin import router as admin_router
+from routers.user import router as user_router
 
 load_dotenv()
 gemini_api = os.getenv("GEMINI_API")
@@ -64,6 +65,7 @@ app.include_router(habits_router)
 app.include_router(daily_logs_router)
 app.include_router(ikigai_router)
 app.include_router(admin_router)
+app.include_router(user_router)
 
 if __name__ == "__main__":
     uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
