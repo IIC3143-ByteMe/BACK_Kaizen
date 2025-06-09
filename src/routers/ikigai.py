@@ -27,7 +27,10 @@ async def list_ikigai_content(current_user=Depends(get_current_user)):
     contents = await IkigaiEducation.find_one(
         IkigaiEducation.owner_id == current_user.user_id
     )
-    return IkigaiEducationOut.from_orm(contents)
+    try:
+        return IkigaiEducationOut.from_orm(contents)
+    except ():
+        raise ValueError
 
 
 # ----- MODIFICAR CONTENIDO (usuario) -----

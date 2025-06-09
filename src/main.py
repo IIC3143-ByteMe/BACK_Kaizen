@@ -1,7 +1,9 @@
 # src/main.py
 
+import traceback
 from typing import Union
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
+from fastapi.responses import JSONResponse
 import uvicorn
 from beanie import init_beanie
 from dotenv import load_dotenv
@@ -36,6 +38,23 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+@app.middleware("http")
+async def catch_exceptions_middleware(request: Request, call_next):
+    try:
+        # let the request run through all your routers / handlers
+        return await call_next(request)
+    except Exception as exc:
+        # print the error and stack trace to stdout/stderr
+        print(f"Unhandled error during {request.method} {request.url}: {exc}")
+        traceback.print_exc()
+
+        # send back a clean 500 response
+        return JSONResponse(
+            status_code=500,
+            content={"detail": "Internal server error"},
+        )
 
 
 @app.get("/")
