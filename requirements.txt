@@ -7,6 +7,7 @@ cachetools==5.5.2
 certifi==2025.4.26
 charset-normalizer==3.4.2
 click==8.2.0
+coverage==7.8.2
 distro==1.9.0
 dnspython==2.7.0
 ecdsa==0.19.1
@@ -47,6 +48,9 @@ Pygments==2.19.1
 pymongo==4.13.0
 pytest==8.4.0
 pytest-asyncio==1.0.0
+pytest-cov==6.1.1
+pytest-html==4.1.1
+pytest-metadata==3.1.1
 python-dotenv==1.1.0
 python-jose==3.5.0
 python-multipart==0.0.20
