@@ -2,8 +2,8 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from typing import List
 
-from models.models import Habit, DailyHabitLog
-from schemas.schemas import HabitCreate, HabitUpdate, HabitOut, HabitProgress
+from models.models import Habit, DailyHabitLog, HabitTemplate
+from schemas.schemas import HabitCreate, HabitUpdate, HabitOut, HabitProgress, TemplateUpdate, TemplateCreate, TemplateOut
 from utils.dependencies import get_current_user
 from schemas.schemas import TokenData
 
@@ -83,3 +83,51 @@ async def get_my_progress(current_user: TokenData = Depends(get_current_user)):
             )
         )
     return progreso
+
+# ----- CREAR PLANTILLA DE HÁBITO (ADMIN) -----
+@router.get("/templates", response_model=List[TemplateOut])
+async def list_templates(user: TokenData = Depends(get_current_user)):
+    """All users can view published templates"""
+    tmpl = await HabitTemplate.find(HabitTemplate.published == True).to_list()
+    return tmpl
+
+@router.post("/templates", response_model=TemplateOut, status_code=status.HTTP_201_CREATED)
+async def create_template(
+    tmpl_in: TemplateCreate,
+    admin: TokenData = Depends(get_current_user),
+):
+    """Only admins may create templates"""
+    if admin.role != "admin":
+        raise HTTPException(status_code=403, detail="Not authorized")
+    tmpl = HabitTemplate(**tmpl_in.dict())
+    await tmpl.insert()
+    return tmpl
+
+@router.patch("/templates/{template_id}", response_model=TemplateOut)
+async def update_template(
+    template_id: str,
+    changes: TemplateUpdate,
+    admin: TokenData = Depends(get_current_user),
+):
+    """Only admins may update templates"""
+    if admin.role != "admin":
+        raise HTTPException(status_code=403, detail="Not authorized")
+    tmpl = await HabitTemplate.get(template_id)
+    if not tmpl:
+        raise HTTPException(status_code=404, detail="Template not found")
+    await tmpl.set({**changes.dict(exclude_unset=True)})
+    return tmpl
+
+@router.delete("/templates/{template_id}", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_template(
+    template_id: str,
+    admin: TokenData = Depends(get_current_user),
+):
+    """Only admins may delete templates"""
+    if admin.role != "admin":
+        raise HTTPException(status_code=403, detail="Not authorized")
+    tmpl = await HabitTemplate.get(template_id)
+    if not tmpl:
+        raise HTTPException(status_code=404, detail="Template not found")
+    await tmpl.delete()
+    return None
