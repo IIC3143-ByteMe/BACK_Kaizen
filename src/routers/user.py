@@ -10,5 +10,5 @@ router = APIRouter(prefix="/user", tags=["user"])
 # ----- REGISTRO DE USUARIO -----
 @router.get("/", response_model=UserOut)
 async def get_user_info(current_user=Depends(get_current_user)):
-    user = User.get(current_user.user_id)
-    return User.from_orm(user)
+    user = await User.get(current_user.user_id)
+    return UserOut.from_orm(user)
