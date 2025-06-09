@@ -97,7 +97,7 @@ async def get_my_progress(current_user: TokenData = Depends(get_current_user)):
 @router.get("/templates", response_model=List[TemplateOut])
 async def list_templates(user: TokenData = Depends(get_current_user)):
     """All users can view published templates"""
-    tmpl = await HabitTemplate.find(HabitTemplate.published == True).to_list()
+    tmpl = await HabitTemplate.find(HabitTemplate.published).to_list()
     return tmpl
 
 
