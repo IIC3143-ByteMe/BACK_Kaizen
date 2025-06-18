@@ -1,14 +1,12 @@
 from fastapi import APIRouter, Depends
-
-from models.models import User
-from schemas.schemas import UserOut
+from schemas.schemas import UserOut, TokenData
 from utils.dependencies import get_current_user
+from apps.user.userService import UserService
 
 router = APIRouter(prefix="/user", tags=["user"])
+service = UserService()
 
 
-# ----- REGISTRO DE USUARIO -----
 @router.get("/", response_model=UserOut)
-async def get_user_info(current_user=Depends(get_current_user)):
-    user = await User.get(current_user.user_id)
-    return UserOut.from_orm(user)
+async def get_user_info(user: TokenData = Depends(get_current_user)) -> UserOut:
+    return await service.get_user_info(user)
