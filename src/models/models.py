@@ -1,11 +1,18 @@
 # app/models/models.py
 
-from typing import Optional
+from typing import Optional, List
 from datetime import datetime
 from beanie import Document
-from pydantic import EmailStr, Field
+from pydantic import EmailStr, Field, BaseModel, field_validator, ConfigDict
 from enum import Enum
+from bson import ObjectId
 
+
+class Goal(BaseModel):
+    period: str
+    type: str
+    target: int
+    unit: str
 
 # ----- ENUM PARA ROLES -----
 class UserRole(str, Enum):
@@ -37,24 +44,43 @@ class User(Document):
 
 # ----- DOCUMENTO DE HÁBITO -----
 class Habit(Document):
-    owner_id: str  # ID del User que creó el hábito
+    owner_id: ObjectId
     title: str
     description: Optional[str] = None
     icon: str
     color: str
-    grupo: Optional[str] = None
+    group: Optional[str] = None
     type: str
-    goal_period: str
-    goal_value: int
-    goal_value_unit: str
-    task_days: str
-    reminders: str
     ikigai_category: Optional[str] = None
+
+    goal: Goal
+    task_days: List[str]
+    reminders: List[str]
 
     created_at: datetime = Field(default_factory=datetime.utcnow)
 
+    model_config = ConfigDict(
+        arbitrary_types_allowed=True,
+        json_encoders={ObjectId: str}
+    )
+
+    @field_validator("owner_id", mode="before")
+    def _convert_owner_id(cls, v):
+        if isinstance(v, str):
+            return ObjectId(v)
+        return v
+    
+    @field_validator("goal", mode="before")
+    def _convert_goal(cls, v):
+        if isinstance(v, dict):
+            return Goal(**v)
+        if isinstance(v, Goal):
+            return v
+        raise ValueError("goal must be a dict or Goal instance")
+
     class Settings:
         name = "habits"
+
 
 
 # ----- DOCUMENTO DE REGISTRO DIARIO DE HÁBITO -----
@@ -102,3 +128,5 @@ class HabitTemplate(Document):
 
     class Settings:
         name = "habit_templates"
+
+
