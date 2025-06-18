@@ -1,8 +1,13 @@
 from typing import List
 from apps.habits.habitsDBRepository import HabitsRepository
 from schemas.schemas import (
-    HabitCreate, HabitUpdate, HabitOut, HabitProgress,
-    TemplateCreate, TemplateUpdate, TemplateOut
+    HabitCreate,
+    HabitUpdate,
+    HabitOut,
+    HabitProgress,
+    TemplateCreate,
+    TemplateUpdate,
+    TemplateOut,
 )
 from fastapi import HTTPException
 
@@ -22,14 +27,16 @@ class HabitsService:
         habits = await self.repo.list_user_habits(owner_id)
         return [HabitOut.from_orm(h) for h in habits]
 
-    async def update_habit(self, habit_id: str, payload: HabitUpdate, actor) -> HabitOut:
+    async def update_habit(
+        self, habit_id: str, payload: HabitUpdate, actor
+    ) -> HabitOut:
         habit = await self.repo.get_habit(habit_id)
         if not habit:
             raise HTTPException(status_code=404, detail="Hábito no encontrado")
         if habit.owner_id != actor.user_id and actor.role != "admin":
             raise HTTPException(status_code=403, detail="Permisos insuficientes")
         changes = payload.dict(exclude_unset=True)
-        for k, v in changes.items(): 
+        for k, v in changes.items():
             setattr(habit, k, v)
         updated = await self.repo.save_habit(habit)
         return HabitOut.from_orm(updated)
@@ -53,7 +60,7 @@ class HabitsService:
                     habit_id=str(h.id),
                     total_days=total,
                     completed_days=done,
-                    completion_rate=rate
+                    completion_rate=rate,
                 )
             )
         return result
@@ -69,13 +76,17 @@ class HabitsService:
         tmpl = await self.repo.create_template(payload.dict())
         return TemplateOut.from_orm(tmpl)
 
-    async def update_template(self, template_id: str, changes: TemplateUpdate, actor) -> TemplateOut:
+    async def update_template(
+        self, template_id: str, changes: TemplateUpdate, actor
+    ) -> TemplateOut:
         if actor.role != "admin":
             raise HTTPException(status_code=403, detail="Not authorized")
         tmpl = await self.repo.get_template(template_id)
         if not tmpl:
             raise HTTPException(status_code=404, detail="Template not found")
-        updated = await self.repo.update_template(tmpl, changes.dict(exclude_unset=True))
+        updated = await self.repo.update_template(
+            tmpl, changes.dict(exclude_unset=True)
+        )
         return TemplateOut.from_orm(updated)
 
     async def delete_template(self, template_id: str, actor) -> None:

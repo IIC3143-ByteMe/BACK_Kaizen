@@ -9,9 +9,7 @@ class DailyLogsDBRepository:
         return log
 
     async def list_user_logs(self, user_id: str) -> List[DailyHabitLog]:
-        return await DailyHabitLog.find(
-            DailyHabitLog.user_id == user_id
-        ).to_list()
+        return await DailyHabitLog.find(DailyHabitLog.user_id == user_id).to_list()
 
     async def get_log(self, log_id: str) -> Optional[DailyHabitLog]:
         return await DailyHabitLog.get(log_id)

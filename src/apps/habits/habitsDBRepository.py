@@ -32,7 +32,9 @@ class HabitsRepository:
     async def get_template(self, template_id: str) -> Optional[HabitTemplate]:
         return await HabitTemplate.get(template_id)
 
-    async def update_template(self, tmpl: HabitTemplate, changes: dict) -> HabitTemplate:
+    async def update_template(
+        self, tmpl: HabitTemplate, changes: dict
+    ) -> HabitTemplate:
         await tmpl.set(changes)
         return tmpl
 

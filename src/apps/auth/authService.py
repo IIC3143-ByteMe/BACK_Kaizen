@@ -23,7 +23,7 @@ class AuthService:
         if existing:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
-                detail="El correo ya está en uso"
+                detail="El correo ya está en uso",
             )
         data = payload.dict()
         data["hashed_password"] = get_password_hash(data.pop("password"))
@@ -38,13 +38,13 @@ class AuthService:
         if not requester or requester.role != "admin":
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
-                detail="Sólo administradores pueden crear otros administradores"
+                detail="Sólo administradores pueden crear otros administradores",
             )
         existing = await self.repo.find_by_email(payload.email)
         if existing:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
-                detail="El correo ya está en uso"
+                detail="El correo ya está en uso",
             )
         data = payload.dict()
         data["hashed_password"] = get_password_hash(data.pop("password"))
@@ -58,17 +58,17 @@ class AuthService:
         if not email or not password:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Email y contraseña requeridos"
+                detail="Email y contraseña requeridos",
             )
         user = await self.repo.find_by_email(email)
         if not user or not verify_password(password, user.hashed_password):
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Usuario o contraseña incorrectos"
+                detail="Usuario o contraseña incorrectos",
             )
         access_token_expires = timedelta(minutes=self.expire_minutes)
         access_token = create_access_token(
             data={"sub": str(user.id), "role": user.role},
-            expires_delta=access_token_expires
+            expires_delta=access_token_expires,
         )
         return Token(access_token=access_token, token_type="bearer")

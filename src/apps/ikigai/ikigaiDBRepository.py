@@ -9,14 +9,14 @@ class IkigaiDBRepository:
         return content
 
     async def get_content_by_owner(self, owner_id: str) -> Optional[IkigaiEducation]:
-        return await IkigaiEducation.find_one(
-            IkigaiEducation.owner_id == owner_id
-        )
+        return await IkigaiEducation.find_one(IkigaiEducation.owner_id == owner_id)
 
     async def get_content_by_id(self, content_id: str) -> Optional[IkigaiEducation]:
         return await IkigaiEducation.get(content_id)
 
-    async def update_content(self, content: IkigaiEducation, changes: dict) -> IkigaiEducation:
+    async def update_content(
+        self, content: IkigaiEducation, changes: dict
+    ) -> IkigaiEducation:
         await content.set(changes)
         return content
 

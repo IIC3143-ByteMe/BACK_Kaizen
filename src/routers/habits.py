@@ -23,8 +23,7 @@ service = HabitsService()
 # ----- CREAR HÁBITO (USER) -----
 @router.post("/", response_model=HabitOut, status_code=status.HTTP_201_CREATED)
 async def create_habit(
-    payload: HabitCreate,
-    user: TokenData = Depends(get_current_user)
+    payload: HabitCreate, user: TokenData = Depends(get_current_user)
 ):
     return await service.create_habit(payload, user.user_id)
 
@@ -48,34 +47,33 @@ async def update_habit(
 
 # ----- ELIMINAR HÁBITO () -----
 @router.delete("/{habit_id}", status_code=status.HTTP_204_NO_CONTENT)
-async def delete_habit(
-    habit_id: str,
-    user: TokenData = Depends(get_current_user)
-):
+async def delete_habit(habit_id: str, user: TokenData = Depends(get_current_user)):
     await service.delete_habit(habit_id)
     return None
 
 
 # ----- OBTENER PROGRESO PERSONAL (USER) -----
 @router.get("/progress", response_model=List[HabitProgress])
-async def get_progress(user: TokenData = Depends(get_current_user)) -> List[HabitProgress]:
+async def get_progress(
+    user: TokenData = Depends(get_current_user),
+) -> List[HabitProgress]:
     return await service.get_progress(user.user_id)
 
 
-# ----- CREAR PLANTILLA DE HÁBITO (ADMIN) ----- (ojo, creo que no se esta revisando que sea admin)
+# ----- CREAR PLANTILLA DE HÁBITO (ADMIN) -----
+# (ojo, creo que no se esta revisando que sea admin)
 @router.get("/templates", response_model=List[TemplateOut])
-async def list_templates(user: TokenData = Depends(get_current_user)) -> List[TemplateOut]:
+async def list_templates(
+    user: TokenData = Depends(get_current_user),
+) -> List[TemplateOut]:
     return await service.list_templates()
 
 
 @router.post(
-    "/templates",
-    response_model=TemplateOut,
-    status_code=status.HTTP_201_CREATED
+    "/templates", response_model=TemplateOut, status_code=status.HTTP_201_CREATED
 )
 async def create_template(
-    payload: TemplateCreate,
-    user: TokenData = Depends(get_current_user)
+    payload: TemplateCreate, user: TokenData = Depends(get_current_user)
 ) -> TemplateOut:
     return await service.create_template(payload, user)
 
@@ -84,15 +82,14 @@ async def create_template(
 async def update_template(
     template_id: str,
     payload: TemplateUpdate,
-    user: TokenData = Depends(get_current_user)
+    user: TokenData = Depends(get_current_user),
 ) -> TemplateOut:
     return await service.update_template(template_id, payload, user)
 
 
 @router.delete("/templates/{template_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_template(
-    template_id: str,
-    user: TokenData = Depends(get_current_user)
+    template_id: str, user: TokenData = Depends(get_current_user)
 ):
     await service.delete_template(template_id, user)
     return None
