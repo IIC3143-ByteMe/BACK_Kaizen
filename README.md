@@ -22,11 +22,21 @@ cd BACK_Kaizen
 
 ## 2. Crear y activar entorno virtual
 
+Recomendado: puedes agregar dev.sh como un bash file
+```bash
+chmod +x dev.sh
+```
+Y luego correrlo con
+```bash
+./dev.sh
+```
+Revisará que tengas .env, .venv, los requerimientos y correrá todo junto.
+
 ```bash
 python3 -m venv .venv
-source venv/bin/activate    # (Linux/Mac)
+source .venv/bin/activate    # (Linux/Mac)
 # o en Windows:
-# venv\\Scripts\\activate
+# .venv\\Scripts\\activate
 ```
 
 ## 3. Instalar dependencias
@@ -38,6 +48,9 @@ pip install -r requirements.txt
 ## 4. Configurar variables de entorno
 
 1. Crea un archivo llamado `.env` en la raíz del proyecto.
+```bash
+cp .env.example .env
+```
 2. Define al menos estas variables (ejemplo):
 
 ```
@@ -55,7 +68,15 @@ ACCESS_TOKEN_EXPIRE_MINUTES=60
 ```bash
 uvicorn --app-dir src main:app --reload      
 ```
+o puedes usar
+
+```bash
+cd src
+uvicorn main:app --reload
+```
+
 - Desde el `root` del proyecto
+
 - La opción `--reload` permite recargar automáticamente el servidor cuando cambias código.
 - Por defecto la API quedará escuchando en http://127.0.0.1:8000
 
@@ -92,3 +113,8 @@ Puedes usar curl, Postman o Insomnia para probar:
 
 Presiona `Ctrl+C` en la terminal donde corre `uvicorn`.
 
+Luego, para salir del entorno virtual escribe
+
+```bash
+deactivate
+```
