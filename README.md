@@ -23,7 +23,7 @@ cd BACK_Kaizen
 ## 2. Crear y activar entorno virtual
 
 ```bash
-python3 -m venv venv
+python3 -m venv .venv
 source venv/bin/activate    # (Linux/Mac)
 # o en Windows:
 # venv\\Scripts\\activate
@@ -53,10 +53,9 @@ ACCESS_TOKEN_EXPIRE_MINUTES=60
 ## 5. Iniciar la aplicación
 
 ```bash
-cd src
-uvicorn app.main:app --reload
+uvicorn --app-dir src main:app --reload      
 ```
-
+- Desde el `root` del proyecto
 - La opción `--reload` permite recargar automáticamente el servidor cuando cambias código.
 - Por defecto la API quedará escuchando en http://127.0.0.1:8000
 
