@@ -7,6 +7,17 @@ from pydantic import EmailStr, Field, BaseModel, field_validator, ConfigDict
 from enum import Enum
 from bson import ObjectId
 
+# ----- ENUM PARA ARQUETIPOS -----
+class ArquetiposIkigai(str, Enum):
+    CONSTANTE = "constante"
+    EXPLORADOR = "explorador"
+    SOCIAL = "social"
+    REFLECIVO = "reflexivo"
+
+# ----- ENUM PARA ROLES -----
+class UserRole(str, Enum):
+    USER = "user"
+    ADMIN = "admin"
 
 class Goal(BaseModel):
     period: str
@@ -14,18 +25,14 @@ class Goal(BaseModel):
     target: int
     unit: str
 
-# ----- ENUM PARA ROLES -----
-class UserRole(str, Enum):
-    USER = "user"
-    ADMIN = "admin"
-
-
-# ----- ENUM PARA ARQUETIPOS -----
-class ArquetiposIkigai(str, Enum):
-    CONSTANTE = "constante"
-    EXPLORADOR = "explorador"
-    SOCIAL = "social"
-    REFLECIVO = "reflexivo"
+# ----- BASEMODEL DE EDUCACIÓN SOBRE IKIGAI -----
+class IkigaiEducation(BaseModel):
+    arquetype: Optional[ArquetiposIkigai] = None
+    you_love: Optional[str] = None
+    good_at: Optional[str] = None
+    world_needs: Optional[str] = None
+    is_profitbale: Optional[str] = None
+    created_at: datetime = Field(default_factory=datetime.utcnow)
 
 
 # ----- DOCUMENTO DE USUARIO -----
@@ -36,10 +43,19 @@ class User(Document):
     role: UserRole = UserRole.USER
     streak: int = 0
     ikigai_quiz_bool: bool = False
+    ikigai: Optional[IkigaiEducation] = None
     created_at: datetime = Field(default_factory=datetime.utcnow)
 
     class Settings:
         name = "users"  # nombre de la colección
+
+    @field_validator("ikigai", mode="before")
+    def _convert_goal(cls, v):
+        if isinstance(v, dict):
+            return IkigaiEducation(**v)
+        if isinstance(v, IkigaiEducation):
+            return v
+        raise ValueError("IkigaiEducation must be a dict or IkigaiEducation instance")
 
 
 # ----- DOCUMENTO DE HÁBITO -----
@@ -82,7 +98,6 @@ class Habit(Document):
         name = "habits"
 
 
-
 # ----- DOCUMENTO DE REGISTRO DIARIO DE HÁBITO -----
 class DailyHabitLog(Document):
     user_id: str  # ID del User que registra
@@ -93,20 +108,6 @@ class DailyHabitLog(Document):
 
     class Settings:
         name = "daily_habit_logs"
-
-
-# ----- DOCUMENTO DE EDUCACIÓN SOBRE IKIGAI -----
-class IkigaiEducation(Document):
-    owner_id: str  # ID del User que creó el hábito
-    arquetipo: Optional[ArquetiposIkigai] = None
-    amas: Optional[str] = None
-    bueno: Optional[str] = None
-    necesita: Optional[str] = None
-    pagar: Optional[str] = None
-    created_at: datetime = Field(default_factory=datetime.utcnow)
-
-    class Settings:
-        name = "ikigai_education"
 
 
 # ----- TEMPLATE HÁBITO -----

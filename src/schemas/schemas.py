@@ -21,6 +21,25 @@ class UserRole(str, Enum):
     USER = "user"
     ADMIN = "admin"
 
+class IkigaiEducationCreate(BaseModel):
+    arquetype: ArquetiposIkigai
+    you_love: str
+    good_at: str
+    world_needs: str
+    is_profitbale: str
+
+class IkigaiEducation(BaseModel):
+    model_config = ConfigDict(
+        from_attributes=True,
+        populate_by_name=True,
+    )
+    
+    arquetype: Optional[ArquetiposIkigai]
+    you_love: Optional[str]
+    good_at: Optional[str]
+    world_needs: Optional[str]
+    is_profitbale: Optional[str]
+
 
 # ----- MODELOS DE REQUEST -----
 class UserCreate(BaseModel):
@@ -52,6 +71,7 @@ class UserOut(BaseModel):
     role: UserRole
     streak: int
     ikigai_quiz_bool: bool
+    ikigai: Optional[IkigaiEducation]
     created_at: datetime
 
     @field_validator("id", mode="before")
@@ -65,6 +85,19 @@ class UserOut(BaseModel):
     def _serialize_id(self, v: str) -> str:
         # this only runs at dump-time
         return v
+
+    @field_validator("ikigai", mode="before")
+    def _unpack_ikigai(cls, v):
+        if hasattr(v, "model_dump"):
+            return v.model_dump()
+        if isinstance(v, dict):
+            return v
+        return getattr(v, "__dict__", v)
+
+    @field_serializer("ikigai", mode="plain")
+    def _serialize_ikigai(v: IkigaiEducation, info):
+        # v is the validated ikigai instance
+        return v.model_dump()
 
 
 class Token(BaseModel):
@@ -176,41 +209,6 @@ class DailyHabitLogOut(BaseModel):
     date: datetime
     completed: bool
     notes: Optional[str]
-
-    @field_validator("id", mode="before")
-    def _coerce_objectid(cls, v):
-        # before validation: if it's an ObjectId, make it a string
-        if isinstance(v, ObjectId):
-            return str(v)
-        return v  # leave strings (or other) alone
-
-    @field_serializer("id")
-    def serialize_id(self, v):
-        return str(v)
-
-
-# ----- IKIGAI EDUCATION SCHEMAS -----
-class IkigaiEducationCreate(BaseModel):
-    arquetipo: Optional[ArquetiposIkigai]
-    amas: Optional[str]
-    bueno: Optional[str]
-    necesita: Optional[str]
-    pagar: Optional[str]
-
-
-class IkigaiEducationOut(BaseModel):
-    model_config = ConfigDict(
-        from_attributes=True,
-        populate_by_name=True,  # ← add this
-    )
-
-    id: Annotated[str, Field(alias="_id")]
-    arquetipo: Optional[ArquetiposIkigai]
-    amas: Optional[str]
-    bueno: Optional[str]
-    necesita: Optional[str]
-    pagar: Optional[str]
-    created_at: datetime
 
     @field_validator("id", mode="before")
     def _coerce_objectid(cls, v):
