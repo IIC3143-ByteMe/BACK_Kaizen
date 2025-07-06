@@ -21,6 +21,7 @@ class UserRole(str, Enum):
     USER = "user"
     ADMIN = "admin"
 
+
 class IkigaiEducationCreate(BaseModel):
     arquetype: ArquetiposIkigai
     you_love: str
@@ -28,12 +29,13 @@ class IkigaiEducationCreate(BaseModel):
     world_needs: str
     is_profitbale: str
 
+
 class IkigaiEducation(BaseModel):
     model_config = ConfigDict(
         from_attributes=True,
         populate_by_name=True,
     )
-    
+
     arquetype: Optional[ArquetiposIkigai]
     you_love: Optional[str]
     good_at: Optional[str]
@@ -109,12 +111,14 @@ class TokenData(BaseModel):
     user_id: Optional[str] = None
     role: Optional[UserRole] = None
 
+
 # ----- GOAL SCHEMA -----
 class Goal(BaseModel):
     period: str
     type: str
     target: int
     unit: str
+
 
 # ----- HABITS SCHEMAS -----
 class HabitCreate(BaseModel):
@@ -126,9 +130,9 @@ class HabitCreate(BaseModel):
     type: str
     ikigai_category: Optional[str] = None
 
-    goal: Goal 
-    task_days: List[str] 
-    reminders: List[str]  
+    goal: Goal
+    task_days: List[str]
+    reminders: List[str]
 
 
 class HabitUpdate(BaseModel):
@@ -144,6 +148,7 @@ class HabitUpdate(BaseModel):
     task_days: Optional[List[str]] = None
     reminders: Optional[List[str]] = None
 
+
 class HabitOut(BaseModel):
     model_config = ConfigDict(
         from_attributes=True,
@@ -152,16 +157,16 @@ class HabitOut(BaseModel):
         json_encoders={ObjectId: str},
     )
 
-    id:        str                = Field(alias="_id")
-    owner_id:  str
-    title:     str
+    id: str = Field(alias="_id")
+    owner_id: str
+    title: str
     description: Optional[str]
-    icon:      str
-    color:     str
-    group:     Optional[str]
-    type:      str
+    icon: str
+    color: str
+    group: Optional[str]
+    type: str
     ikigai_category: Optional[str]
-    goal:      Goal
+    goal: Goal
     task_days: List[str]
     reminders: List[str]
     created_at: datetime
@@ -186,7 +191,8 @@ class HabitOut(BaseModel):
     def _serialize_goal(v: Goal, info):
         # v is the validated Goal instance
         return v.model_dump()
-    
+
+
 # ----- DAILY LOG SCHEMAS -----
 class DailyHabitLogCreate(BaseModel):
     habit_id: str
@@ -295,4 +301,3 @@ class TemplateOut(BaseModel):
     @field_serializer("id")
     def serialize_id(self, v):
         return str(v)
-

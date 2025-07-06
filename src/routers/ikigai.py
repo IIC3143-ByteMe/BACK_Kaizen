@@ -7,9 +7,7 @@ router = APIRouter(prefix="/ikigai", tags=["ikigai"])
 service = IkigaiService()
 
 
-@router.post(
-    "/", response_model=IkigaiEducation, status_code=status.HTTP_201_CREATED
-)
+@router.post("/", response_model=IkigaiEducation, status_code=status.HTTP_201_CREATED)
 async def create_ikigai_content(
     payload: IkigaiEducationCreate, user: TokenData = Depends(get_current_user)
 ) -> IkigaiEducation:

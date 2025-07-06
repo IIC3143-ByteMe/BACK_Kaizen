@@ -7,6 +7,7 @@ from pydantic import EmailStr, Field, BaseModel, field_validator, ConfigDict
 from enum import Enum
 from bson import ObjectId
 
+
 # ----- ENUM PARA ARQUETIPOS -----
 class ArquetiposIkigai(str, Enum):
     CONSTANTE = "constante"
@@ -14,16 +15,19 @@ class ArquetiposIkigai(str, Enum):
     SOCIAL = "social"
     REFLECIVO = "reflexivo"
 
+
 # ----- ENUM PARA ROLES -----
 class UserRole(str, Enum):
     USER = "user"
     ADMIN = "admin"
+
 
 class Goal(BaseModel):
     period: str
     type: str
     target: int
     unit: str
+
 
 # ----- BASEMODEL DE EDUCACIÓN SOBRE IKIGAI -----
 class IkigaiEducation(BaseModel):
@@ -76,8 +80,7 @@ class Habit(Document):
     created_at: datetime = Field(default_factory=datetime.utcnow)
 
     model_config = ConfigDict(
-        arbitrary_types_allowed=True,
-        json_encoders={ObjectId: str}
+        arbitrary_types_allowed=True, json_encoders={ObjectId: str}
     )
 
     @field_validator("owner_id", mode="before")
@@ -85,7 +88,7 @@ class Habit(Document):
         if isinstance(v, str):
             return ObjectId(v)
         return v
-    
+
     @field_validator("goal", mode="before")
     def _convert_goal(cls, v):
         if isinstance(v, dict):
@@ -129,5 +132,3 @@ class HabitTemplate(Document):
 
     class Settings:
         name = "habit_templates"
-
-

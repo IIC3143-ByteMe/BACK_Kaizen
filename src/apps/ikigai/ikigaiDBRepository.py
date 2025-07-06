@@ -2,6 +2,7 @@ from beanie.operators import Set
 from typing import Optional
 from models.models import IkigaiEducation, User
 
+
 class IkigaiDBRepository:
     async def create_content(self, user_id: str, data: dict) -> IkigaiEducation:
         content = IkigaiEducation(**data)
@@ -18,10 +19,8 @@ class IkigaiDBRepository:
     async def get_content_by_id(self, content_id: str) -> Optional[IkigaiEducation]:
         return await IkigaiEducation.get(content_id)
 
-    async def update_content(
-        self, user_id: str, changes: dict
-    ) -> IkigaiEducation:
-        
+    async def update_content(self, user_id: str, changes: dict) -> IkigaiEducation:
+
         set_dict = {f"ikigai.{k}": v for k, v in changes.items()}
         user = await User.find_one(User.id == user_id).update(Set(set_dict))
 

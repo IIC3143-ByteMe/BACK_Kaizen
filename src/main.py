@@ -15,7 +15,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from db.mongodb import db
 
 # Modelos para Beanie
-from models.models import User, Habit, DailyHabitLog, IkigaiEducation, HabitTemplate
+from models.models import User, Habit, DailyHabitLog, HabitTemplate
 
 # Routers
 from routers.auth import router as auth_router
