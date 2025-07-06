@@ -15,7 +15,7 @@ class IkigaiEducationCreate(BaseModel):
     you_love: str
     good_at: str
     world_needs: str
-    is_profitbale: str
+    is_profitable: str
 
 
 class IkigaiEducation(BaseModel):
@@ -28,4 +28,4 @@ class IkigaiEducation(BaseModel):
     you_love: Optional[str]
     good_at: Optional[str]
     world_needs: Optional[str]
-    is_profitbale: Optional[str]
+    is_profitable: Optional[str]
