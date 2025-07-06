@@ -3,6 +3,7 @@ import asyncio
 from jose import jwt
 from models.models import Habit
 
+
 @pytest.fixture(scope="module")
 def habit_id(client, user_token):
     # Inserta un hábito directamente para usar en logs
@@ -26,6 +27,7 @@ def habit_id(client, user_token):
         ).insert()
     )
     return str(habit.id)
+
 
 def test_daily_logs_crud(client, user_token, habit_id):
     headers = {"Authorization": f"Bearer {user_token}"}

@@ -3,6 +3,7 @@ def test_create_habit_missing_fields_returns_422(client, user_token):
     resp = client.post("/habits/", json={}, headers=headers)
     assert resp.status_code == 422
 
+
 def test_create_and_get_habit_success(client, user_token):
     headers = {"Authorization": f"Bearer {user_token}"}
     payload = {

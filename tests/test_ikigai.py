@@ -1,5 +1,6 @@
 import pytest
 
+
 @pytest.mark.skip(reason="admin/ikigai not implemented yet")
 def test_ikigai_education_crud(client, admin_token):
     headers = {"Authorization": f"Bearer {admin_token}"}
