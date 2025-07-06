@@ -49,14 +49,27 @@ class User(Document):
 
     @field_validator("ikigai", mode="before")
     def _convert_goal(cls, v):
-        if v is None:
+        # Si es None, devuélvelo tal cual
+        if v is None or v == "":
             return None
         if isinstance(v, dict):
             return IkigaiEducation(**v)
         if isinstance(v, IkigaiEducation):
             return v
+        # Si viene como string "null" (algunos frontends lo envían así)
+        if isinstance(v, str) and v.lower() == "null":
+            return None
+        # Si viene como string y parece un dict (¡caso raro, pero posible!)
+        if isinstance(v, str):
+            try:
+                import json
+                d = json.loads(v)
+                if isinstance(d, dict):
+                    return IkigaiEducation(**d)
+            except Exception:
+                pass
         raise ValueError(
-            "IkigaiEducation must be a dict, None, or IkigaiEducation instance"
+            "IkigaiEducation must be a dict, None, IkigaiEducation instance, or valid dict as string"
         )
 
 

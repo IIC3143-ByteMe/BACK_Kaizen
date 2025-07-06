@@ -143,8 +143,6 @@ def test_protected_requires_auth(client):
 
 
 # --- Daily Habit Logs CRUD ---
-
-
 def test_daily_logs_crud(client, token):
     """
     Insert a Habit directly, then test daily-log create, list, patch, delete.
