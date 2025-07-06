@@ -30,7 +30,7 @@ class IkigaiEducation(BaseModel):
     you_love: Optional[str] = None
     good_at: Optional[str] = None
     world_needs: Optional[str] = None
-    is_profitbale: Optional[str] = None
+    is_profitable: Optional[str] = None
     created_at: datetime = Field(default_factory=datetime.utcnow)
 
 
