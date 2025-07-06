@@ -41,6 +41,7 @@ TEST_ADMIN = {"email": "admin_user@example.com", "password": "AdminPass123"}
 
 import os
 
+
 @pytest.fixture(scope="session", autouse=True)
 def init_db():
     """
@@ -48,6 +49,7 @@ def init_db():
     Drops the database after tests complete.
     """
     from dotenv import load_dotenv
+
     load_dotenv()  # Asegura que los env estén cargados
 
     # Usa la URI de tu .env
@@ -59,7 +61,12 @@ def init_db():
     asyncio.get_event_loop().run_until_complete(
         init_beanie(
             database=test_db,
-            document_models=[User, Habit, DailyHabitLog, HabitTemplate],  # SOLO DOCUMENTS
+            document_models=[
+                User,
+                Habit,
+                DailyHabitLog,
+                HabitTemplate,
+            ],  # SOLO DOCUMENTS
         )
     )
     yield
@@ -70,6 +77,7 @@ def init_db():
 @app.exception_handler(Exception)
 async def debug_exception_handler(request: Request, exc: Exception):
     import traceback
+
     print("Exception:", traceback.format_exc())
     return JSONResponse(
         status_code=500,
