@@ -29,7 +29,7 @@ class AuthService:
         data["hashed_password"] = get_password_hash(data.pop("password"))
         data["role"] = "user"
         user = await self.repo.insert_user(data)
-        return UserOut.from_orm(user)
+        return UserOut.model_dump(user)
 
     async def login_for_access_token(self, form_data: Dict[str, str]) -> Token:
         email = form_data.get("email")
