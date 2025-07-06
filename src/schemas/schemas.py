@@ -21,6 +21,7 @@ class UserRole(str, Enum):
     USER = "user"
     ADMIN = "admin"
 
+
 class IkigaiCategoryEnum(str, Enum):
     PASSION = "passion"
     VOCATION = "vocation"

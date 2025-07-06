@@ -6,7 +6,6 @@ import uvicorn
 from beanie import init_beanie
 from dotenv import load_dotenv
 
-import os
 from fastapi.middleware.cors import CORSMiddleware
 
 from db.mongodb import db
@@ -20,8 +19,7 @@ from routers.ikigai import router as ikigai_router
 from routers.admin import router as admin_router
 from routers.user import router as user_router
 
-
-
+load_dotenv()
 app = FastAPI()
 
 app.add_middleware(
@@ -45,15 +43,6 @@ async def catch_exceptions_middleware(request: Request, call_next):
             status_code=500,
             content={"detail": "Internal server error"},
         )
-
-
-@app.get("/")
-def read_root():
-    response = gemini_client.models.generate_content(
-        model="gemini-2.0-flash",
-        contents="Explain how AI works in a few words",
-    )
-    return {"Hello": response.text}
 
 
 @app.get("/items/{item_id}")
