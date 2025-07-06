@@ -49,7 +49,6 @@ class User(Document):
 
     @field_validator("ikigai", mode="before")
     def _convert_goal(cls, v):
-        # Si es None, devuélvelo tal cual
         if v is None or v == "":
             return None
         if isinstance(v, dict):
