@@ -1,5 +1,5 @@
 from fastapi import HTTPException, status
-from schemas.users import IkigaiEducation, IkigaiEducationCreate
+from schemas.users import IkigaiEducation, IkigaiEducationCreate, IkigaiEducationUpdate
 from schemas.roles import TokenData
 from apps.ikigai.ikigaiDBRepository import IkigaiDBRepository
 
@@ -11,7 +11,7 @@ class IkigaiService:
     async def create_content(
         self, payload: IkigaiEducationCreate, user: TokenData
     ) -> IkigaiEducation:
-        data = payload.dict()
+        data = payload.model_dump()
         content = await self.repo.create_content(user.user_id, data)
         return IkigaiEducation.model_validate(content)
 
@@ -24,15 +24,17 @@ class IkigaiService:
         return IkigaiEducation.model_validate(content)
 
     async def update_content(
-        self, payload: IkigaiEducationCreate, user: TokenData
+        self, payload: IkigaiEducationUpdate, user: TokenData
     ) -> IkigaiEducation:
         content = await self.repo.get_content_by_owner(user.user_id)
         if not content:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND, detail="Contenido no encontrado"
             )
-        changes = payload.dict(exclude_unset=True)
-        updated = await self.repo.update_content(content, changes)
+        changes = payload.model_dump(exclude_unset=True)
+        [setattr(content, k, v) for k, v in changes.items() if hasattr(content, k)]
+
+        updated = await self.repo.update_content(user.user_id, content)
         return IkigaiEducation.model_validate(updated)
 
     async def delete_content(self, content_id: str) -> None:
