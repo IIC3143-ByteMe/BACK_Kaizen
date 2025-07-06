@@ -43,15 +43,34 @@ class UserOut(BaseModel):
 
     @field_validator("ikigai", mode="before")
     def _unpack_ikigai(cls, v):
+        if v is None:
+            return None
+        if hasattr(v, "model_dump"):
+            return v.model_dump()
+        if isinstance(v, dict):
+            return v
+        if isinstance(v, str) and v.lower() == "null":
+            return None
+        if isinstance(v, str):
+            try:
+                import json
+
+                d = json.loads(v)
+                if isinstance(d, dict):
+                    return d
+            except Exception:
+                pass
+        return getattr(v, "__dict__", v)
+
+    @field_serializer("ikigai", mode="plain")
+    def _serialize_ikigai(v: "IkigaiEducation", info):
+        if v is None:
+            return None
         if hasattr(v, "model_dump"):
             return v.model_dump()
         if isinstance(v, dict):
             return v
         return getattr(v, "__dict__", v)
-
-    @field_serializer("ikigai", mode="plain")
-    def _serialize_ikigai(v: IkigaiEducation, info):
-        return v.model_dump()
 
 
 class Token(BaseModel):

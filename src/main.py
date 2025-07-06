@@ -5,8 +5,7 @@ from fastapi.responses import JSONResponse
 import uvicorn
 from beanie import init_beanie
 from dotenv import load_dotenv
-from google import genai
-import os
+
 from fastapi.middleware.cors import CORSMiddleware
 
 from db.mongodb import db
@@ -21,9 +20,6 @@ from routers.admin import router as admin_router
 from routers.user import router as user_router
 
 load_dotenv()
-gemini_api = os.getenv("GEMINI_API")
-gemini_client = genai.Client(api_key=gemini_api)
-
 app = FastAPI()
 
 app.add_middleware(
@@ -47,15 +43,6 @@ async def catch_exceptions_middleware(request: Request, call_next):
             status_code=500,
             content={"detail": "Internal server error"},
         )
-
-
-@app.get("/")
-def read_root():
-    response = gemini_client.models.generate_content(
-        model="gemini-2.0-flash",
-        contents="Explain how AI works in a few words",
-    )
-    return {"Hello": response.text}
 
 
 @app.get("/items/{item_id}")
