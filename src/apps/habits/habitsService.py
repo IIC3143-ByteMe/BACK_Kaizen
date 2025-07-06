@@ -36,10 +36,10 @@ class HabitsService:
             "Tienes que solo contestar con la categoría asignada,"
             " sin ninguna otra palabra."
             "El hábito a categorizar es el siguiente:"
-            f"title: {data["title"]}"
-            f"description: {data["description"]}"
-            f"group: {data["group"]}"
-            f"type {data["type"]}"
+            f'title: {data["title"]}'
+            f'description: {data["description"]}'
+            f'group: {data["group"]}'
+            f'type {data["type"]}'
         )
 
         ikigai_category = client.models.generate_content(
