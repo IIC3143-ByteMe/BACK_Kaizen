@@ -6,6 +6,7 @@ from schemas.habits import (
     HabitOut,
     HabitProgress,
 )
+from schemas.roles import TokenData
 from schemas.templates import (
     TemplateCreate,
     TemplateUpdate,
@@ -51,9 +52,9 @@ class HabitsService:
         habit = await self.repo.create_habit(data)
         return HabitOut.model_validate(habit)
 
-    async def list_habits(self, owner_id: str) -> List[HabitOut]:
-        habits = await self.repo.list_user_habits(owner_id)
-        return [HabitOut.from_orm(h) for h in habits]
+    async def list_habits(self, user: TokenData) -> List[HabitOut]:
+        habits = await self.repo.list_user_habits(user.user_id)
+        return [HabitOut.model_dump(h) for h in habits]
 
     async def update_habit(
         self, habit_id: str, payload: HabitUpdate, actor

@@ -1,4 +1,6 @@
 from typing import List, Optional
+
+from beanie import PydanticObjectId
 from models.models import Habit, DailyHabitLog, HabitTemplate
 
 
@@ -9,7 +11,10 @@ class HabitsRepository:
         return habit
 
     async def list_user_habits(self, owner_id: str) -> List[Habit]:
-        return await Habit.find(Habit.owner_id == owner_id).to_list()
+        habits = await Habit.find(
+            Habit.owner_id == PydanticObjectId(owner_id)
+        ).to_list()
+        return habits
 
     async def get_habit(self, habit_id: str) -> Optional[Habit]:
         return await Habit.get(habit_id)
