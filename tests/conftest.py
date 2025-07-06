@@ -14,10 +14,12 @@ from schemas.roles import TokenData
 from jose import jwt
 from utils.auth_utils import SECRET_KEY, ALGORITHM
 
+
 # — Exception handler para debug en todos los tests —
 @app.exception_handler(Exception)
 async def debug_exception_handler(request: Request, exc: Exception):
     import traceback
+
     print("Exception:", traceback.format_exc())
     return JSONResponse(500, {"detail": "Internal server error", "error": str(exc)})
 
@@ -26,6 +28,7 @@ async def debug_exception_handler(request: Request, exc: Exception):
 @pytest.fixture(scope="session", autouse=True)
 def init_db():
     from dotenv import load_dotenv
+
     load_dotenv()
 
     mongo_uri = os.environ["MONGODB_URI"]
