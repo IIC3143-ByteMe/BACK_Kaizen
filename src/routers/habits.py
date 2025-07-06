@@ -25,7 +25,7 @@ async def create_habit(
 
 @router.get("/", response_model=List[HabitOut])
 async def list_habits(user: TokenData = Depends(get_current_user)) -> List[HabitOut]:
-    return await service.list_habits(user.user_id)
+    return await service.list_habits(user)
 
 
 @router.put("/{habit_id}", response_model=HabitOut)
