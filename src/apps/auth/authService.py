@@ -1,17 +1,15 @@
 import os
 from datetime import timedelta
-from fastapi import HTTPException, status, Depends
+from fastapi import HTTPException, status
 from typing import Dict
 from schemas.roles import UserOut, Token
-from schemas.requests import UserCreate, AdminCreate
+from schemas.requests import UserCreate
 
 from utils.auth_utils import (
     get_password_hash,
     verify_password,
     create_access_token,
-    decode_access_token,
 )
-from utils.dependencies import oauth2_scheme
 from apps.auth.authDBRepository import AuthDBRepository
 
 
@@ -30,27 +28,6 @@ class AuthService:
         data = payload.dict()
         data["hashed_password"] = get_password_hash(data.pop("password"))
         data["role"] = "user"
-        user = await self.repo.insert_user(data)
-        return UserOut.from_orm(user)
-
-    async def register_admin(
-        self, payload: AdminCreate, token: str = Depends(oauth2_scheme)
-    ) -> UserOut:
-        requester = decode_access_token(token)
-        if not requester or requester.role != "admin":
-            raise HTTPException(
-                status_code=status.HTTP_403_FORBIDDEN,
-                detail="Sólo administradores pueden crear otros administradores",
-            )
-        existing = await self.repo.find_by_email(payload.email)
-        if existing:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="El correo ya está en uso",
-            )
-        data = payload.dict()
-        data["hashed_password"] = get_password_hash(data.pop("password"))
-        data["role"] = "admin"
         user = await self.repo.insert_user(data)
         return UserOut.from_orm(user)
 
