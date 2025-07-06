@@ -10,11 +10,11 @@ router = APIRouter()
 
 
 @router.post("/daily-completions/")
-async def get_or_create_daily_completion(user_id: str, date: date):
-    """
-    Obtiene o crea un DailyCompletions para el user y fecha indicada.
-    Si no existe, lo crea con los habits de ese user y valores iniciales.
-    """
+async def get_or_create_daily_completion(
+    date: date = Body(...),
+    user: TokenData = Depends(get_current_user),
+):
+    user_id = user.user_id
     existing = await DailyCompletions.find_one(
         {"user_id": ObjectId(user_id), "date": date}
     )
@@ -27,24 +27,18 @@ async def get_or_create_daily_completion(user_id: str, date: date):
 
     completions = []
     for h in habits:
-        progress = 0.0
-        percentage = 0.0
-        completed = False
-        completions.append(
-            {
-                "habit_id": h.id,
-                "title": h.title,
-                "goal": h.goal,
-                "progress": progress,
-                "percentage": percentage,
-                "completed": completed,
-            }
-        )
+        completions.append({
+            "habit_id": h.id,
+            "title": h.title,
+            "goal": h.goal,
+            "progress": 0.0,
+            "percentage": 0.0,
+            "completed": False,
+        })
 
     overall_percentage = (
         sum(c["percentage"] for c in completions) / len(completions)
-        if completions
-        else 0.0
+        if completions else 0.0
     )
 
     dc = DailyCompletions(
