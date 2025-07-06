@@ -1,7 +1,7 @@
 from bson import ObjectId
 from fastapi import APIRouter, Body, Depends, HTTPException
 from models.models import DailyCompletions, Habit, UpdateProgressInput
-from datetime import date
+from datetime import date, datetime
 
 from schemas.roles import TokenData
 from utils.dependencies import get_current_user
@@ -97,12 +97,17 @@ async def update_completion_progress(
     return dc
 
 
-@router.get("/daily-completions/{user_id}/{day}")
-async def get_daily_completion(user_id: str, day: str):
-    from datetime import datetime
-
+@router.get("/daily-completions/{day}")
+async def get_daily_completion(
+    day: str,
+    user: TokenData = Depends(get_current_user),
+):
     dt = datetime.strptime(day, "%Y-%m-%d").date()
     obj = await DailyCompletions.find_one(
-        DailyCompletions.user_id == ObjectId(user_id), DailyCompletions.date == dt
+        DailyCompletions.user_id == ObjectId(user.user_id), DailyCompletions.date == dt
     )
+    if not obj:
+        raise HTTPException(
+            status_code=404, detail="No daily completion found for this user and date"
+        )
     return obj

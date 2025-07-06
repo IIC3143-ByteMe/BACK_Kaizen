@@ -91,28 +91,29 @@ def admin_token(client, admin_factory):
 async def clean_db():
     """Limpia todas las colecciones de la base de datos de test antes de cada test"""
     from dotenv import load_dotenv
+
     load_dotenv()
-    
+
     mongo_uri = os.environ["MONGODB_URI"]
     db_name = os.environ["MONGO_DB_NAME_TEST"]
-    
+
     client = AsyncIOMotorClient(mongo_uri)
     test_db = client[db_name]
-    
+
     # Limpiar todas las colecciones
     await User.delete_all()
     await Habit.delete_all()
     await DailyHabitLog.delete_all()
     await HabitTemplate.delete_all()
-    
+
     yield
-    
+
     # Limpiar después del test también
     await User.delete_all()
     await Habit.delete_all()
     await DailyHabitLog.delete_all()
     await HabitTemplate.delete_all()
-    
+
     client.close()
 
 
@@ -120,25 +121,29 @@ async def clean_db():
 @pytest.fixture
 def user_factory():
     """Factory para crear usuarios únicos"""
+
     def _create_user(email_prefix="testuser", password="TestPass123"):
         unique_id = str(uuid.uuid4())[:8]
         return {
             "email": f"{email_prefix}_{unique_id}@example.com",
             "password": password,
-            "full_name": f"Test User {unique_id}"
+            "full_name": f"Test User {unique_id}",
         }
+
     return _create_user
 
 
 @pytest.fixture
 def admin_factory():
     """Factory para crear usuarios admin únicos"""
+
     def _create_admin(email_prefix="testadmin", password="AdminPass123"):
         unique_id = str(uuid.uuid4())[:8]
         return {
             "email": f"{email_prefix}_{unique_id}@example.com",
             "password": password,
             "full_name": f"Admin User {unique_id}",
-            "role": "admin"
+            "role": "admin",
         }
+
     return _create_admin

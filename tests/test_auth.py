@@ -6,8 +6,6 @@ from utils.auth_utils import create_access_token, SECRET_KEY, ALGORITHM
 pytestmark = pytest.mark.usefixtures("clean_db")
 
 
-
-
 @pytest.mark.order(1)
 def test_register_success(client, user_factory):
     new_user = user_factory("newuser")
@@ -16,8 +14,6 @@ def test_register_success(client, user_factory):
     body = r.json()
     assert "_id" in body
     assert body["email"] == new_user["email"]
-
-
 
 
 @pytest.mark.order(2)
@@ -53,12 +49,9 @@ def test_login_success(client, user_factory):
 def test_login_invalid_password(client, user_factory):
     new_user = user_factory("wrongpass")
     client.post("/auth/register", json=new_user)
-    
+
     # Intentar login con password incorrecta
-    wrong_creds = {
-        "email": new_user["email"],
-        "password": "WrongPassword123"
-    }
+    wrong_creds = {"email": new_user["email"], "password": "WrongPassword123"}
     resp = client.post("/auth/login", json=wrong_creds)
     assert resp.status_code in (400, 401)
 
