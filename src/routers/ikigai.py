@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, status
-from schemas.users import IkigaiEducation, IkigaiEducationCreate
+from schemas.users import IkigaiEducation, IkigaiEducationCreate, IkigaiEducationUpdate
 from utils.dependencies import get_current_user, require_admin, TokenData
 from apps.ikigai.ikigaiService import IkigaiService
 
@@ -23,8 +23,9 @@ async def get_ikigai_content(
 
 @router.put("/", response_model=IkigaiEducation)
 async def update_ikigai_content(
-    payload: IkigaiEducationCreate, user: TokenData = Depends(get_current_user)
+    payload: IkigaiEducationUpdate, user: TokenData = Depends(get_current_user)
 ) -> IkigaiEducation:
+    print(payload)
     return await service.update_content(payload, user)
 
 

@@ -19,10 +19,16 @@ class IkigaiDBRepository:
     async def get_content_by_id(self, content_id: str) -> Optional[IkigaiEducation]:
         return await IkigaiEducation.get(content_id)
 
-    async def update_content(self, user_id: str, changes: dict) -> IkigaiEducation:
+    async def update_content(
+        self, user_id: str, changes: IkigaiEducation
+    ) -> IkigaiEducation:
 
-        set_dict = {f"ikigai.{k}": v for k, v in changes.items()}
-        user = await User.find_one(User.id == user_id).update(Set(set_dict))
+        print("AQUIII")
+        print(changes)
+
+        user = await User.get(user_id)
+        await user.update(Set({User.ikigai: changes}))
+        user = await User.get(user_id)
 
         ikigai = user.ikigai
         return ikigai
