@@ -3,8 +3,15 @@ import asyncio
 from fastapi.testclient import TestClient
 from motor.motor_asyncio import AsyncIOMotorClient
 from beanie import init_beanie
+from fastapi import Request
+from fastapi.responses import JSONResponse
+
+
 from main import app
-from models.models import User, Habit, DailyHabitLog, IkigaiEducation
+from models.models import User, Habit, DailyHabitLog, IkigaiEducation, HabitTemplate
+from schemas.roles import TokenData
+from schemas.requests import UserCreate
+
 from utils.auth_utils import (
     create_access_token,
     get_password_hash,
@@ -13,6 +20,7 @@ from utils.auth_utils import (
 )
 from jose import jwt
 
+# Test data
 TEST_USER = {"email": "pytest_user@example.com", "password": "TestPass123"}
 TEST_HABIT = {
     "title": "PyTest Habit",
@@ -31,22 +39,42 @@ TEST_HABIT = {
 TEST_ADMIN = {"email": "admin_user@example.com", "password": "AdminPass123"}
 
 
+import os
+
 @pytest.fixture(scope="session", autouse=True)
 def init_db():
     """
     Initialize a fresh test database and Beanie before any tests run.
     Drops the database after tests complete.
     """
-    client = AsyncIOMotorClient("mongodb://localhost:27017")
-    test_db = client["kaizen_test_db"]
+    from dotenv import load_dotenv
+    load_dotenv()  # Asegura que los env estén cargados
+
+    # Usa la URI de tu .env
+    mongo_uri = os.environ["MONGODB_URI"]
+    db_name = os.environ["MONGO_DB_NAME_TEST"]  # Base de datos de test
+
+    client = AsyncIOMotorClient(mongo_uri)
+    test_db = client[db_name]
     asyncio.get_event_loop().run_until_complete(
         init_beanie(
             database=test_db,
-            document_models=[User, Habit, DailyHabitLog, IkigaiEducation],
+            document_models=[User, Habit, DailyHabitLog, HabitTemplate],  # SOLO DOCUMENTS
         )
     )
     yield
-    client.drop_database("kaizen_test_db")
+    # Limpia la base de datos de test
+    client.drop_database(db_name)
+
+
+@app.exception_handler(Exception)
+async def debug_exception_handler(request: Request, exc: Exception):
+    import traceback
+    print("Exception:", traceback.format_exc())
+    return JSONResponse(
+        status_code=500,
+        content={"detail": "Internal server error", "error": str(exc)},
+    )
 
 
 @pytest.fixture(scope="module")
@@ -63,6 +91,7 @@ def token(client):
     """
     Registers and logs in a test user, returning a valid JWT.
     """
+    # Register (ignore if already exists)
     client.post("/auth/register", json=TEST_USER)
     # Login
     resp = client.post("/auth/login", json=TEST_USER)
@@ -112,8 +141,10 @@ def test_daily_logs_crud(client, token):
     """
     Insert a Habit directly, then test daily-log create, list, patch, delete.
     """
+    # Decode user_id from token
     payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
     user_id = payload.get("sub")
+    # Insert parent habit
     parent = asyncio.get_event_loop().run_until_complete(
         Habit(
             owner_id=user_id,
@@ -133,6 +164,7 @@ def test_daily_logs_crud(client, token):
     )
     hid = str(parent.id)
     headers = {"Authorization": f"Bearer {token}"}
+    # Create a daily log via API
     r1 = client.post(
         "/daily-logs/",
         json={"habit_id": hid, "date": "2025-06-01T00:00:00Z", "completed": True},
@@ -155,6 +187,7 @@ def test_daily_logs_crud(client, token):
 @pytest.mark.skip(reason="create_habit endpoint not implemented yet")
 def test_daily_logs_crud(client, token):
     headers = {"Authorization": f"Bearer {token}"}
+    # create parent habit
     r_h = client.post(
         "/habits/",
         json={
