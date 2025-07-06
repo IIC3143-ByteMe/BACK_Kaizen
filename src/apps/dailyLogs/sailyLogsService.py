@@ -1,11 +1,11 @@
 from typing import List
 from fastapi import HTTPException, status
-from schemas.schemas import (
+from schemas.daily_logs import (
     DailyHabitLogCreate,
     DailyHabitLogUpdate,
     DailyHabitLogOut,
-    TokenData,
 )
+from schemas.roles import TokenData
 from apps.dailyLogs.dailyLogsDBRepository import DailyLogsDBRepository
 from models.models import Habit
 

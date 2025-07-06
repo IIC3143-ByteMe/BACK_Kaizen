@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, status
 from typing import Dict
-from schemas.schemas import UserCreate, AdminCreate, UserOut, Token
+from schemas.requests import UserCreate, AdminCreate
+from schemas.roles import UserOut, Token
 from utils.dependencies import oauth2_scheme
 from apps.auth.authService import AuthService
 

@@ -1,18 +1,15 @@
 from fastapi import APIRouter, Depends, status
 from typing import List
 
-from schemas.schemas import (
-    HabitCreate,
-    HabitUpdate,
-    HabitOut,
-    HabitProgress,
+from schemas.habits import HabitCreate, HabitUpdate, HabitOut, HabitProgress
+from schemas.templates import (
     TemplateUpdate,
     TemplateCreate,
     TemplateOut,
 )
 from apps.habits.habitsService import HabitsService
 from utils.dependencies import get_current_user
-from schemas.schemas import TokenData
+from schemas.roles import TokenData
 
 router = APIRouter(prefix="/habits", tags=["habits"])
 

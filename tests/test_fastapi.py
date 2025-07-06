@@ -3,10 +3,8 @@ import asyncio
 from fastapi.testclient import TestClient
 from motor.motor_asyncio import AsyncIOMotorClient
 from beanie import init_beanie
-
 from main import app
 from models.models import User, Habit, DailyHabitLog, IkigaiEducation
-from schemas.schemas import UserCreate, TokenData
 from utils.auth_utils import (
     create_access_token,
     get_password_hash,

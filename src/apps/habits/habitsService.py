@@ -1,10 +1,12 @@
 from typing import List
 from apps.habits.habitsDBRepository import HabitsRepository
-from schemas.schemas import (
+from schemas.habits import (
     HabitCreate,
     HabitUpdate,
     HabitOut,
     HabitProgress,
+)
+from schemas.templates import (
     TemplateCreate,
     TemplateUpdate,
     TemplateOut,

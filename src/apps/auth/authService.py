@@ -2,7 +2,9 @@ import os
 from datetime import timedelta
 from fastapi import HTTPException, status, Depends
 from typing import Dict
-from schemas.schemas import UserCreate, AdminCreate, UserOut, Token
+from schemas.roles import UserOut, Token
+from schemas.requests import UserCreate, AdminCreate
+
 from utils.auth_utils import (
     get_password_hash,
     verify_password,

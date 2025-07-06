@@ -1,11 +1,11 @@
 from typing import List
 from fastapi import APIRouter, Depends, status
-from schemas.schemas import (
+from schemas.daily_logs import (
     DailyHabitLogCreate,
     DailyHabitLogUpdate,
     DailyHabitLogOut,
-    TokenData,
 )
+from schemas.roles import TokenData
 from apps.dailyLogs.sailyLogsService import DailyLogsService
 from utils.dependencies import get_current_user
 

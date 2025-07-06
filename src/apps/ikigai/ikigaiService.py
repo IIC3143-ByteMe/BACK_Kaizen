@@ -1,5 +1,6 @@
 from fastapi import HTTPException, status
-from schemas.schemas import IkigaiEducation, IkigaiEducationCreate, TokenData
+from schemas.users import IkigaiEducation, IkigaiEducationCreate
+from schemas.roles import TokenData
 from apps.ikigai.ikigaiDBRepository import IkigaiDBRepository
 
 

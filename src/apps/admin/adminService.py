@@ -1,6 +1,7 @@
 from typing import List
 from fastapi import HTTPException, status
-from schemas.schemas import HabitProgress, TokenData
+from schemas.habits import HabitProgress
+from schemas.roles import TokenData
 from apps.admin.adminDBRepository import AdminDBRepository
 
 

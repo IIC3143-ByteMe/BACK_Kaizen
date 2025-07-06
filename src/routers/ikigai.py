@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, status
-from schemas.schemas import IkigaiEducation, IkigaiEducationCreate
+from schemas.users import IkigaiEducation, IkigaiEducationCreate
 from utils.dependencies import get_current_user, require_admin, TokenData
 from apps.ikigai.ikigaiService import IkigaiService
 

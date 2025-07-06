@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends
-from schemas.schemas import UserOut, TokenData
+from schemas.roles import UserOut, TokenData
 from utils.dependencies import get_current_user
 from apps.user.userService import UserService
 

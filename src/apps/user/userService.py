@@ -1,5 +1,5 @@
 from fastapi import HTTPException, status
-from schemas.schemas import TokenData, UserOut
+from schemas.roles import TokenData, UserOut
 from apps.user.userDBRepository import UserDBRepository
 
 

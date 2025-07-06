@@ -2,7 +2,7 @@ from passlib.context import CryptContext
 from datetime import datetime, timedelta
 from typing import Optional
 from jose import JWTError, jwt
-from schemas.schemas import TokenData
+from schemas.roles import TokenData
 import os
 
 SECRET_KEY = os.getenv("JWT_SECRET_KEY")
