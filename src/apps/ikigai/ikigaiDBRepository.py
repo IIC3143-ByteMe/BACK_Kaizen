@@ -19,7 +19,9 @@ class IkigaiDBRepository:
     async def get_content_by_id(self, content_id: str) -> Optional[IkigaiEducation]:
         return await IkigaiEducation.get(content_id)
 
-    async def update_content(self, user_id: str, changes: IkigaiEducation) -> IkigaiEducation:
+    async def update_content(
+        self, user_id: str, changes: IkigaiEducation
+    ) -> IkigaiEducation:
 
         print("AQUIII")
         print(changes)
