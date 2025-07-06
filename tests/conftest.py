@@ -8,16 +8,18 @@ from motor.motor_asyncio import AsyncIOMotorClient
 from beanie import init_beanie
 
 from main import app
-from models.models import User, Habit, DailyHabitLog, HabitTemplate
+from models.models import User, Habit, DailyHabitLog, HabitTemplate, DailyCompletions
 from utils.auth_utils import get_password_hash
 from schemas.roles import TokenData
 from jose import jwt
 from utils.auth_utils import SECRET_KEY, ALGORITHM
 
+
 # — Exception handler para debug en todos los tests —
 @app.exception_handler(Exception)
 async def debug_exception_handler(request: Request, exc: Exception):
     import traceback
+
     print("Exception:", traceback.format_exc())
     return JSONResponse(500, {"detail": "Internal server error", "error": str(exc)})
 
@@ -26,6 +28,7 @@ async def debug_exception_handler(request: Request, exc: Exception):
 @pytest.fixture(scope="session", autouse=True)
 def init_db():
     from dotenv import load_dotenv
+
     load_dotenv()
 
     mongo_uri = os.environ["MONGODB_URI"]
@@ -36,7 +39,13 @@ def init_db():
     asyncio.get_event_loop().run_until_complete(
         init_beanie(
             database=test_db,
-            document_models=[User, Habit, DailyHabitLog, HabitTemplate],
+            document_models=[
+                User,
+                Habit,
+                DailyHabitLog,
+                HabitTemplate,
+                DailyCompletions,
+            ],
         )
     )
     yield
