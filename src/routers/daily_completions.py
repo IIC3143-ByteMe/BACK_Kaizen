@@ -104,9 +104,10 @@ async def get_daily_completion(
 ):
     dt = datetime.strptime(day, "%Y-%m-%d").date()
     obj = await DailyCompletions.find_one(
-        DailyCompletions.user_id == ObjectId(user.user_id),
-        DailyCompletions.date == dt
+        DailyCompletions.user_id == ObjectId(user.user_id), DailyCompletions.date == dt
     )
     if not obj:
-        raise HTTPException(status_code=404, detail="No daily completion found for this user and date")
+        raise HTTPException(
+            status_code=404, detail="No daily completion found for this user and date"
+        )
     return obj
