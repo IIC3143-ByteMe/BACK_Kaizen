@@ -1,8 +1,7 @@
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, status
 from typing import Dict
 from schemas.requests import UserCreate
 from schemas.roles import UserOut, Token
-from utils.dependencies import oauth2_scheme
 from apps.auth.authService import AuthService
 
 router = APIRouter(prefix="/auth", tags=["auth"])

@@ -1,6 +1,6 @@
 import os
 from datetime import timedelta
-from fastapi import HTTPException, status, Depends
+from fastapi import HTTPException, status
 from typing import Dict
 from schemas.roles import UserOut, Token
 from schemas.requests import UserCreate
@@ -9,9 +9,7 @@ from utils.auth_utils import (
     get_password_hash,
     verify_password,
     create_access_token,
-    decode_access_token,
 )
-from utils.dependencies import oauth2_scheme
 from apps.auth.authDBRepository import AuthDBRepository
 
 
