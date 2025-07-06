@@ -1,5 +1,5 @@
 from typing import Optional, List
-from datetime import datetime
+from datetime import datetime, date
 from beanie import Document
 from pydantic import EmailStr, Field, BaseModel, field_validator, ConfigDict
 from enum import Enum
@@ -19,7 +19,7 @@ class UserRole(str, Enum):
 
 
 class Goal(BaseModel):
-    period: str
+    period: str  # daily, weekly, monthly
     type: str
     target: int
     unit: str
@@ -139,3 +139,37 @@ class HabitTemplate(Document):
 
     class Settings:
         name = "habit_templates"
+
+
+class CompletionEntry(BaseModel):
+    habit_id: ObjectId
+    title: str
+    goal: Goal
+    progress: float
+    percentage: float
+    completed: bool
+
+    class Config:
+        arbitrary_types_allowed = True
+        json_encoders = {ObjectId: str}
+
+
+class DailyCompletions(Document):
+    user_id: ObjectId
+    date: date
+    completions: List[CompletionEntry]
+    overall_percentage: float
+    day_completed: bool = False
+
+    class Settings:
+        name = "daily_completions"
+
+    class Config:
+        arbitrary_types_allowed = True
+        json_encoders = {ObjectId: str}
+
+
+class UpdateProgressInput(BaseModel):
+    habit_id: str
+    date: date
+    progress: float

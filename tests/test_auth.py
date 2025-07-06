@@ -7,6 +7,7 @@ pytestmark = pytest.mark.usefixtures("clean_db")
 
 
 
+
 @pytest.mark.order(1)
 def test_register_success(client, user_factory):
     new_user = user_factory("newuser")
@@ -15,6 +16,7 @@ def test_register_success(client, user_factory):
     body = r.json()
     assert "_id" in body
     assert body["email"] == new_user["email"]
+
 
 
 

@@ -10,7 +10,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from db.mongodb import db
 
-from models.models import User, Habit, DailyHabitLog, HabitTemplate
+from models.models import User, Habit, DailyHabitLog, HabitTemplate, DailyCompletions
 
 from routers.auth import router as auth_router
 from routers.habits import router as habits_router
@@ -18,6 +18,7 @@ from routers.daily_logs import router as daily_logs_router
 from routers.ikigai import router as ikigai_router
 from routers.admin import router as admin_router
 from routers.user import router as user_router
+from routers.daily_completions import router as daily_completion_router
 
 load_dotenv()
 app = FastAPI()
@@ -54,7 +55,7 @@ def read_item(item_id: int, q: Union[str, None] = None):
 async def on_startup():
     await init_beanie(
         database=db,
-        document_models=[User, Habit, DailyHabitLog, HabitTemplate],
+        document_models=[User, Habit, DailyHabitLog, HabitTemplate, DailyCompletions],
     )
 
 
@@ -64,6 +65,7 @@ app.include_router(daily_logs_router)
 app.include_router(ikigai_router)
 app.include_router(admin_router)
 app.include_router(user_router)
+app.include_router(daily_completion_router)
 
 if __name__ == "__main__":
     uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
