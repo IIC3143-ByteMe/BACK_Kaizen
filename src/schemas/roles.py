@@ -63,8 +63,14 @@ class UserOut(BaseModel):
         return getattr(v, "__dict__", v)
 
     @field_serializer("ikigai", mode="plain")
-    def _serialize_ikigai(v: IkigaiEducation, info):
-        return v.model_dump()
+    def _serialize_ikigai(v: "IkigaiEducation", info):
+        if v is None:
+            return None
+        if hasattr(v, "model_dump"):
+            return v.model_dump()
+        if isinstance(v, dict):
+            return v
+        return getattr(v, "__dict__", v)
 
 
 class Token(BaseModel):
