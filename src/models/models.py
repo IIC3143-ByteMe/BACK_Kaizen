@@ -49,11 +49,15 @@ class User(Document):
 
     @field_validator("ikigai", mode="before")
     def _convert_goal(cls, v):
+        if v is None:
+            return None
         if isinstance(v, dict):
             return IkigaiEducation(**v)
         if isinstance(v, IkigaiEducation):
             return v
-        raise ValueError("IkigaiEducation must be a dict or IkigaiEducation instance")
+        raise ValueError(
+            "IkigaiEducation must be a dict, None, or IkigaiEducation instance"
+        )
 
 
 class Habit(Document):
