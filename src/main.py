@@ -15,7 +15,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from db.mongodb import db
 
 # Modelos para Beanie
-from models.models import User, Habit, DailyHabitLog, IkigaiEducation, HabitTemplate
+from models.models import User, Habit, DailyHabitLog, HabitTemplate
 
 # Routers
 from routers.auth import router as auth_router
@@ -76,7 +76,7 @@ async def on_startup():
     # Inicializar Beanie con la DB ya conectada
     await init_beanie(
         database=db,
-        document_models=[User, Habit, DailyHabitLog, IkigaiEducation, HabitTemplate],
+        document_models=[User, Habit, DailyHabitLog, HabitTemplate],
     )
 
 

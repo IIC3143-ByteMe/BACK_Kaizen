@@ -1,24 +1,31 @@
+from beanie.operators import Set
 from typing import Optional
-from models.models import IkigaiEducation
+from models.models import IkigaiEducation, User
 
 
 class IkigaiDBRepository:
-    async def create_content(self, data: dict) -> IkigaiEducation:
+    async def create_content(self, user_id: str, data: dict) -> IkigaiEducation:
         content = IkigaiEducation(**data)
-        await content.insert()
+        user = await User.get(user_id)
+        await user.update(Set({User.ikigai: content}))
+
         return content
 
     async def get_content_by_owner(self, owner_id: str) -> Optional[IkigaiEducation]:
-        return await IkigaiEducation.find_one(IkigaiEducation.owner_id == owner_id)
+        user = await User.get(owner_id)
+        ikigai = user.ikigai
+        return ikigai
 
     async def get_content_by_id(self, content_id: str) -> Optional[IkigaiEducation]:
         return await IkigaiEducation.get(content_id)
 
-    async def update_content(
-        self, content: IkigaiEducation, changes: dict
-    ) -> IkigaiEducation:
-        await content.set(changes)
-        return content
+    async def update_content(self, user_id: str, changes: dict) -> IkigaiEducation:
 
-    async def delete_content(self, content: IkigaiEducation) -> None:
-        await content.delete()
+        set_dict = {f"ikigai.{k}": v for k, v in changes.items()}
+        user = await User.find_one(User.id == user_id).update(Set(set_dict))
+
+        ikigai = user.ikigai
+        return ikigai
+
+    async def delete_content(self, user_id) -> None:
+        await User.find_one(User.id == user_id).update(Set({User.ikigai: None}))

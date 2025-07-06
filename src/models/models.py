@@ -1,16 +1,11 @@
 # app/models/models.py
 
-from typing import Optional
+from typing import Optional, List
 from datetime import datetime
 from beanie import Document
-from pydantic import EmailStr, Field
+from pydantic import EmailStr, Field, BaseModel, field_validator, ConfigDict
 from enum import Enum
-
-
-# ----- ENUM PARA ROLES -----
-class UserRole(str, Enum):
-    USER = "user"
-    ADMIN = "admin"
+from bson import ObjectId
 
 
 # ----- ENUM PARA ARQUETIPOS -----
@@ -21,6 +16,29 @@ class ArquetiposIkigai(str, Enum):
     REFLECIVO = "reflexivo"
 
 
+# ----- ENUM PARA ROLES -----
+class UserRole(str, Enum):
+    USER = "user"
+    ADMIN = "admin"
+
+
+class Goal(BaseModel):
+    period: str
+    type: str
+    target: int
+    unit: str
+
+
+# ----- BASEMODEL DE EDUCACIÓN SOBRE IKIGAI -----
+class IkigaiEducation(BaseModel):
+    arquetype: Optional[ArquetiposIkigai] = None
+    you_love: Optional[str] = None
+    good_at: Optional[str] = None
+    world_needs: Optional[str] = None
+    is_profitbale: Optional[str] = None
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+
+
 # ----- DOCUMENTO DE USUARIO -----
 class User(Document):
     email: EmailStr
@@ -29,29 +47,55 @@ class User(Document):
     role: UserRole = UserRole.USER
     streak: int = 0
     ikigai_quiz_bool: bool = False
+    ikigai: Optional[IkigaiEducation] = None
     created_at: datetime = Field(default_factory=datetime.utcnow)
 
     class Settings:
         name = "users"  # nombre de la colección
 
+    @field_validator("ikigai", mode="before")
+    def _convert_goal(cls, v):
+        if isinstance(v, dict):
+            return IkigaiEducation(**v)
+        if isinstance(v, IkigaiEducation):
+            return v
+        raise ValueError("IkigaiEducation must be a dict or IkigaiEducation instance")
+
 
 # ----- DOCUMENTO DE HÁBITO -----
 class Habit(Document):
-    owner_id: str  # ID del User que creó el hábito
+    owner_id: ObjectId
     title: str
     description: Optional[str] = None
     icon: str
     color: str
-    grupo: Optional[str] = None
+    group: Optional[str] = None
     type: str
-    goal_period: str
-    goal_value: int
-    goal_value_unit: str
-    task_days: str
-    reminders: str
     ikigai_category: Optional[str] = None
 
+    goal: Goal
+    task_days: List[str]
+    reminders: List[str]
+
     created_at: datetime = Field(default_factory=datetime.utcnow)
+
+    model_config = ConfigDict(
+        arbitrary_types_allowed=True, json_encoders={ObjectId: str}
+    )
+
+    @field_validator("owner_id", mode="before")
+    def _convert_owner_id(cls, v):
+        if isinstance(v, str):
+            return ObjectId(v)
+        return v
+
+    @field_validator("goal", mode="before")
+    def _convert_goal(cls, v):
+        if isinstance(v, dict):
+            return Goal(**v)
+        if isinstance(v, Goal):
+            return v
+        raise ValueError("goal must be a dict or Goal instance")
 
     class Settings:
         name = "habits"
@@ -67,20 +111,6 @@ class DailyHabitLog(Document):
 
     class Settings:
         name = "daily_habit_logs"
-
-
-# ----- DOCUMENTO DE EDUCACIÓN SOBRE IKIGAI -----
-class IkigaiEducation(Document):
-    owner_id: str  # ID del User que creó el hábito
-    arquetipo: Optional[ArquetiposIkigai] = None
-    amas: Optional[str] = None
-    bueno: Optional[str] = None
-    necesita: Optional[str] = None
-    pagar: Optional[str] = None
-    created_at: datetime = Field(default_factory=datetime.utcnow)
-
-    class Settings:
-        name = "ikigai_education"
 
 
 # ----- TEMPLATE HÁBITO -----
