@@ -13,16 +13,43 @@ from schemas.templates import (
 )
 from fastapi import HTTPException
 
+from utils.gemini_util import get_gemini_model
+
 
 class HabitsService:
     def __init__(self):
         self.repo = HabitsRepository()
 
     async def create_habit(self, payload: HabitCreate, owner_id: str) -> HabitOut:
-        data = payload.dict()
+        data = payload.model_dump()
+        client = get_gemini_model()
+
+        prompt = (
+            "Toma el rol de un analista que revisa y asigna una categoria de las"
+            " aristas"
+            " de el ikigai."
+            "Te entregaré la descripción de un habito a mejorar por un usuario y"
+            " lo tienes que categorizar en solo un"
+            "area del ikigai."
+            "Las categorías posibles son: 1.-passion 2.-vocation"
+            " 3.-mission 4.-profession"
+            "Tienes que solo contestar con la categoría asignada,"
+            " sin ninguna otra palabra."
+            "El hábito a categorizar es el siguiente:"
+            f'title: {data["title"]}'
+            f'description: {data["description"]}'
+            f'group: {data["group"]}'
+            f'type {data["type"]}'
+        )
+
+        ikigai_category = client.models.generate_content(
+            model="gemini-2.5-flash", contents=prompt
+        ).text
+
         data["owner_id"] = owner_id
+        data["ikigai_category"] = ikigai_category
         habit = await self.repo.create_habit(data)
-        return HabitOut.from_orm(habit)
+        return HabitOut.model_validate(habit)
 
     async def list_habits(self, owner_id: str) -> List[HabitOut]:
         habits = await self.repo.list_user_habits(owner_id)
