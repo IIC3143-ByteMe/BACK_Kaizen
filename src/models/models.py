@@ -56,20 +56,20 @@ class User(Document):
             return IkigaiEducation(**v)
         if isinstance(v, IkigaiEducation):
             return v
-        # Si viene como string "null" (algunos frontends lo envían así)
         if isinstance(v, str) and v.lower() == "null":
             return None
-        # Si viene como string y parece un dict (¡caso raro, pero posible!)
         if isinstance(v, str):
             try:
                 import json
+
                 d = json.loads(v)
                 if isinstance(d, dict):
                     return IkigaiEducation(**d)
             except Exception:
                 pass
         raise ValueError(
-            "IkigaiEducation must be a dict, None, IkigaiEducation instance, or valid dict as string"
+            "IkigaiEducation must be a dict, None, "
+            "IkigaiEducation instance, or valid dict as string"
         )
 
 
