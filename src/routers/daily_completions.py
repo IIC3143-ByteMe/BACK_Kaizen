@@ -27,18 +27,21 @@ async def get_or_create_daily_completion(
 
     completions = []
     for h in habits:
-        completions.append({
-            "habit_id": h.id,
-            "title": h.title,
-            "goal": h.goal,
-            "progress": 0.0,
-            "percentage": 0.0,
-            "completed": False,
-        })
+        completions.append(
+            {
+                "habit_id": h.id,
+                "title": h.title,
+                "goal": h.goal,
+                "progress": 0.0,
+                "percentage": 0.0,
+                "completed": False,
+            }
+        )
 
     overall_percentage = (
         sum(c["percentage"] for c in completions) / len(completions)
-        if completions else 0.0
+        if completions
+        else 0.0
     )
 
     dc = DailyCompletions(
