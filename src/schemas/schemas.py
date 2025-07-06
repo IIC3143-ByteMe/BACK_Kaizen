@@ -1,5 +1,3 @@
-# src/schemas/schemas.py
-
 from typing import Optional, Annotated, List
 from datetime import datetime
 from bson import ObjectId
@@ -78,14 +76,12 @@ class UserOut(BaseModel):
 
     @field_validator("id", mode="before")
     def _coerce_objectid(cls, v):
-        # before validation: if it's an ObjectId, make it a string
         if isinstance(v, ObjectId):
             return str(v)
-        return v  # leave strings (or other) alone
+        return v
 
     @field_serializer("id")
     def _serialize_id(self, v: str) -> str:
-        # this only runs at dump-time
         return v
 
     @field_validator("ikigai", mode="before")
@@ -98,7 +94,6 @@ class UserOut(BaseModel):
 
     @field_serializer("ikigai", mode="plain")
     def _serialize_ikigai(v: IkigaiEducation, info):
-        # v is the validated ikigai instance
         return v.model_dump()
 
 
@@ -189,7 +184,6 @@ class HabitOut(BaseModel):
 
     @field_serializer("goal", mode="plain")
     def _serialize_goal(v: Goal, info):
-        # v is the validated Goal instance
         return v.model_dump()
 
 
@@ -218,10 +212,9 @@ class DailyHabitLogOut(BaseModel):
 
     @field_validator("id", mode="before")
     def _coerce_objectid(cls, v):
-        # before validation: if it's an ObjectId, make it a string
         if isinstance(v, ObjectId):
             return str(v)
-        return v  # leave strings (or other) alone
+        return v
 
     @field_serializer("id")
     def serialize_id(self, v):
@@ -233,7 +226,7 @@ class HabitProgress(BaseModel):
     habit_id: str
     total_days: int
     completed_days: int
-    completion_rate: float  # porcentaje completado (0.0–100.0)
+    completion_rate: float
 
 
 # --- TEMPLATE SCHEMAS ---
@@ -272,7 +265,7 @@ class TemplateUpdate(BaseModel):
 class TemplateOut(BaseModel):
     model_config = ConfigDict(
         from_attributes=True,
-        populate_by_name=True,  # ← add this
+        populate_by_name=True,
     )
 
     id: Annotated[str, Field(alias="_id")]
@@ -293,10 +286,9 @@ class TemplateOut(BaseModel):
 
     @field_validator("id", mode="before")
     def _coerce_objectid(cls, v):
-        # before validation: if it's an ObjectId, make it a string
         if isinstance(v, ObjectId):
             return str(v)
-        return v  # leave strings (or other) alone
+        return v
 
     @field_serializer("id")
     def serialize_id(self, v):

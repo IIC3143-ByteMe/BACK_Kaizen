@@ -32,6 +32,5 @@ async def update_ikigai_content(
 async def delete_ikigai_content(
     content_id: str, admin: TokenData = Depends(require_admin)
 ):
-    # require_admin ensures only admins reach here
     await service.delete_content(content_id)
     return None

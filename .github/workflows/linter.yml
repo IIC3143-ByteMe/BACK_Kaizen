@@ -3,30 +3,24 @@ name: PEP8 Linter
 on:
   pull_request:
     branches:
-      - main  # or any branch you want to target (e.g., 'develop')
+      - main
 
 jobs:
   lint:
     runs-on: ubuntu-latest
     steps:
-      # Step 1: Checkout the code
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # Step 2: Set up Python
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: 3.9  # Set this to your Python version
+          python-version: 3.9  
 
-      # Step 3: Install dependencies (flake8)
       - name: Install dependencies
         run: |
           pip install flake8
-          # Optionally install flake8 directly if not in requirements.txt
-          # pip install flake8
 
-      # Step 4: Run flake8 linter
       - name: Run flake8
         run: |
-          flake8 src # Customize this to match your project's style
+          flake8 src

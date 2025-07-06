@@ -15,7 +15,6 @@ from utils.auth_utils import (
 )
 from jose import jwt
 
-# Test data
 TEST_USER = {"email": "pytest_user@example.com", "password": "TestPass123"}
 TEST_HABIT = {
     "title": "PyTest Habit",
@@ -66,7 +65,6 @@ def token(client):
     """
     Registers and logs in a test user, returning a valid JWT.
     """
-    # Register (ignore if already exists)
     client.post("/auth/register", json=TEST_USER)
     # Login
     resp = client.post("/auth/login", json=TEST_USER)
@@ -116,10 +114,8 @@ def test_daily_logs_crud(client, token):
     """
     Insert a Habit directly, then test daily-log create, list, patch, delete.
     """
-    # Decode user_id from token
     payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
     user_id = payload.get("sub")
-    # Insert parent habit
     parent = asyncio.get_event_loop().run_until_complete(
         Habit(
             owner_id=user_id,
@@ -139,7 +135,6 @@ def test_daily_logs_crud(client, token):
     )
     hid = str(parent.id)
     headers = {"Authorization": f"Bearer {token}"}
-    # Create a daily log via API
     r1 = client.post(
         "/daily-logs/",
         json={"habit_id": hid, "date": "2025-06-01T00:00:00Z", "completed": True},
@@ -162,7 +157,6 @@ def test_daily_logs_crud(client, token):
 @pytest.mark.skip(reason="create_habit endpoint not implemented yet")
 def test_daily_logs_crud(client, token):
     headers = {"Authorization": f"Bearer {token}"}
-    # create parent habit
     r_h = client.post(
         "/habits/",
         json={
