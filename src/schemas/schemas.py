@@ -21,6 +21,12 @@ class UserRole(str, Enum):
     USER = "user"
     ADMIN = "admin"
 
+class IkigaiCategoryEnum(str, Enum):
+    PASSION = "passion"
+    VOCATION = "vocation"
+    MISSION = "mission"
+    PROFESSION = "profession"
+
 
 class IkigaiEducationCreate(BaseModel):
     arquetype: ArquetiposIkigai
@@ -128,7 +134,7 @@ class HabitCreate(BaseModel):
     color: str
     group: Optional[str] = None
     type: str
-    ikigai_category: Optional[str] = None
+    ikigai_category: Optional[IkigaiCategoryEnum] = None
 
     goal: Goal
     task_days: List[str]
@@ -142,7 +148,7 @@ class HabitUpdate(BaseModel):
     color: Optional[str] = None
     group: Optional[str] = None
     type: Optional[str] = None
-    ikigai_category: Optional[str] = None
+    ikigai_category: Optional[IkigaiCategoryEnum] = None
 
     goal: Optional[Goal] = None
     task_days: Optional[List[str]] = None
@@ -165,7 +171,7 @@ class HabitOut(BaseModel):
     color: str
     group: Optional[str]
     type: str
-    ikigai_category: Optional[str]
+    ikigai_category: Optional[IkigaiCategoryEnum]
     goal: Goal
     task_days: List[str]
     reminders: List[str]

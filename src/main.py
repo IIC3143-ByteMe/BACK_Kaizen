@@ -5,7 +5,7 @@ from fastapi.responses import JSONResponse
 import uvicorn
 from beanie import init_beanie
 from dotenv import load_dotenv
-from google import genai
+
 import os
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -20,9 +20,7 @@ from routers.ikigai import router as ikigai_router
 from routers.admin import router as admin_router
 from routers.user import router as user_router
 
-load_dotenv()
-gemini_api = os.getenv("GEMINI_API")
-gemini_client = genai.Client(api_key=gemini_api)
+
 
 app = FastAPI()
 
