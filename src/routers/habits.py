@@ -1,26 +1,21 @@
-# src/routers/habits.py
 from fastapi import APIRouter, Depends, status
 from typing import List
 
-from schemas.schemas import (
-    HabitCreate,
-    HabitUpdate,
-    HabitOut,
-    HabitProgress,
+from schemas.habits import HabitCreate, HabitUpdate, HabitOut, HabitProgress
+from schemas.templates import (
     TemplateUpdate,
     TemplateCreate,
     TemplateOut,
 )
 from apps.habits.habitsService import HabitsService
 from utils.dependencies import get_current_user
-from schemas.schemas import TokenData
+from schemas.roles import TokenData
 
 router = APIRouter(prefix="/habits", tags=["habits"])
 
 service = HabitsService()
 
 
-# ----- CREAR HÁBITO (USER) -----
 @router.post("/", response_model=HabitOut, status_code=status.HTTP_201_CREATED)
 async def create_habit(
     payload: HabitCreate, user: TokenData = Depends(get_current_user)
@@ -28,13 +23,11 @@ async def create_habit(
     return await service.create_habit(payload, user.user_id)
 
 
-# ----- LISTAR HÁBITOS PROPIOS (USER) -----
 @router.get("/", response_model=List[HabitOut])
 async def list_habits(user: TokenData = Depends(get_current_user)) -> List[HabitOut]:
     return await service.list_habits(user.user_id)
 
 
-# ----- MODIFICAR HÁBITO (USER O ADMIN) -----
 @router.put("/{habit_id}", response_model=HabitOut)
 async def update_habit(
     habit_id: str,
@@ -45,14 +38,12 @@ async def update_habit(
     return habit
 
 
-# ----- ELIMINAR HÁBITO () -----
 @router.delete("/{habit_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_habit(habit_id: str, user: TokenData = Depends(get_current_user)):
     await service.delete_habit(habit_id)
     return None
 
 
-# ----- OBTENER PROGRESO PERSONAL (USER) -----
 @router.get("/progress", response_model=List[HabitProgress])
 async def get_progress(
     user: TokenData = Depends(get_current_user),

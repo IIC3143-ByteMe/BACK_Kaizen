@@ -1,6 +1,7 @@
 from typing import List
 from fastapi import APIRouter, Depends, status
-from schemas.schemas import HabitProgress, TokenData
+from schemas.habits import HabitProgress
+from schemas.roles import TokenData
 from utils.dependencies import require_admin
 from apps.admin.adminService import AdminService
 

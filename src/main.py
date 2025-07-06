@@ -1,5 +1,3 @@
-# src/main.py
-
 import traceback
 from typing import Union
 from fastapi import FastAPI, Request
@@ -11,13 +9,10 @@ from google import genai
 import os
 from fastapi.middleware.cors import CORSMiddleware
 
-# Conexión a MongoDB
 from db.mongodb import db
 
-# Modelos para Beanie
 from models.models import User, Habit, DailyHabitLog, HabitTemplate
 
-# Routers
 from routers.auth import router as auth_router
 from routers.habits import router as habits_router
 from routers.daily_logs import router as daily_logs_router
@@ -43,14 +38,11 @@ app.add_middleware(
 @app.middleware("http")
 async def catch_exceptions_middleware(request: Request, call_next):
     try:
-        # let the request run through all your routers / handlers
         return await call_next(request)
     except Exception as exc:
-        # print the error and stack trace to stdout/stderr
         print(f"Unhandled error during {request.method} {request.url}: {exc}")
         traceback.print_exc()
 
-        # send back a clean 500 response
         return JSONResponse(
             status_code=500,
             content={"detail": "Internal server error"},
@@ -73,7 +65,6 @@ def read_item(item_id: int, q: Union[str, None] = None):
 
 @app.on_event("startup")
 async def on_startup():
-    # Inicializar Beanie con la DB ya conectada
     await init_beanie(
         database=db,
         document_models=[User, Habit, DailyHabitLog, HabitTemplate],

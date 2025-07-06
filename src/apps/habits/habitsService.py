@@ -1,10 +1,12 @@
 from typing import List
 from apps.habits.habitsDBRepository import HabitsRepository
-from schemas.schemas import (
+from schemas.habits import (
     HabitCreate,
     HabitUpdate,
     HabitOut,
     HabitProgress,
+)
+from schemas.templates import (
     TemplateCreate,
     TemplateUpdate,
     TemplateOut,
@@ -16,7 +18,6 @@ class HabitsService:
     def __init__(self):
         self.repo = HabitsRepository()
 
-    # USER HABITS
     async def create_habit(self, payload: HabitCreate, owner_id: str) -> HabitOut:
         data = payload.dict()
         data["owner_id"] = owner_id
@@ -65,7 +66,6 @@ class HabitsService:
             )
         return result
 
-    # TEMPLATES
     async def list_templates(self) -> List[TemplateOut]:
         tmpls = await self.repo.list_templates()
         return [TemplateOut.from_orm(t) for t in tmpls]

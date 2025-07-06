@@ -1,6 +1,7 @@
 from typing import List
 from fastapi import HTTPException, status
-from schemas.schemas import HabitProgress, TokenData
+from schemas.habits import HabitProgress
+from schemas.roles import TokenData
 from apps.admin.adminDBRepository import AdminDBRepository
 
 
@@ -11,7 +12,6 @@ class AdminService:
     async def get_user_progress(
         self, user_id: str, admin: TokenData
     ) -> List[HabitProgress]:
-        # require_admin dependency ensures admin
         user = await self.repo.get_user(user_id)
         if not user:
             raise HTTPException(
@@ -35,7 +35,6 @@ class AdminService:
         return result
 
     async def delete_habit(self, habit_id: str, admin: TokenData) -> None:
-        # require_admin ensures admin role
         from models.models import Habit
 
         habit = await Habit.get(habit_id)

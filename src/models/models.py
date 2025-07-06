@@ -1,5 +1,3 @@
-# app/models/models.py
-
 from typing import Optional, List
 from datetime import datetime
 from beanie import Document
@@ -8,7 +6,6 @@ from enum import Enum
 from bson import ObjectId
 
 
-# ----- ENUM PARA ARQUETIPOS -----
 class ArquetiposIkigai(str, Enum):
     CONSTANTE = "constante"
     EXPLORADOR = "explorador"
@@ -16,7 +13,6 @@ class ArquetiposIkigai(str, Enum):
     REFLECIVO = "reflexivo"
 
 
-# ----- ENUM PARA ROLES -----
 class UserRole(str, Enum):
     USER = "user"
     ADMIN = "admin"
@@ -29,7 +25,6 @@ class Goal(BaseModel):
     unit: str
 
 
-# ----- BASEMODEL DE EDUCACIÓN SOBRE IKIGAI -----
 class IkigaiEducation(BaseModel):
     arquetype: Optional[ArquetiposIkigai] = None
     you_love: Optional[str] = None
@@ -39,7 +34,6 @@ class IkigaiEducation(BaseModel):
     created_at: datetime = Field(default_factory=datetime.utcnow)
 
 
-# ----- DOCUMENTO DE USUARIO -----
 class User(Document):
     email: EmailStr
     hashed_password: str
@@ -51,7 +45,7 @@ class User(Document):
     created_at: datetime = Field(default_factory=datetime.utcnow)
 
     class Settings:
-        name = "users"  # nombre de la colección
+        name = "users"
 
     @field_validator("ikigai", mode="before")
     def _convert_goal(cls, v):
@@ -62,7 +56,6 @@ class User(Document):
         raise ValueError("IkigaiEducation must be a dict or IkigaiEducation instance")
 
 
-# ----- DOCUMENTO DE HÁBITO -----
 class Habit(Document):
     owner_id: ObjectId
     title: str
@@ -101,7 +94,6 @@ class Habit(Document):
         name = "habits"
 
 
-# ----- DOCUMENTO DE REGISTRO DIARIO DE HÁBITO -----
 class DailyHabitLog(Document):
     user_id: str  # ID del User que registra
     habit_id: str  # ID del Habit que está registrando
@@ -113,7 +105,6 @@ class DailyHabitLog(Document):
         name = "daily_habit_logs"
 
 
-# ----- TEMPLATE HÁBITO -----
 class HabitTemplate(Document):
     title: str
     description: str
