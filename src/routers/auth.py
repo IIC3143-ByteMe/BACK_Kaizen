@@ -1,11 +1,11 @@
-from fastapi import APIRouter, status
+from fastapi import APIRouter
 from typing import Dict
-from schemas.requests import UserCreate
-from schemas.roles import UserOut, Token
+from schemas.roles import Token
 from apps.auth.authService import AuthService
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 service = AuthService()
+
 
 @router.post("/login", response_model=Token)
 async def login(form_data: Dict[str, str]):
