@@ -1,5 +1,6 @@
 from typing import List
 from apps.habits.habitsDBRepository import HabitsRepository
+from models.models import Goal
 from schemas.habits import (
     HabitCreate,
     HabitUpdate,
@@ -8,9 +9,9 @@ from schemas.habits import (
 )
 from schemas.roles import TokenData
 from schemas.templates import (
-    TemplateCreate,
-    TemplateUpdate,
-    TemplateOut,
+    TemplateHabitCreate,
+    TemplateHabitOut,
+    TemplateHabitUpdate,
 )
 from fastapi import HTTPException
 
@@ -100,19 +101,23 @@ class HabitsService:
             )
         return result
 
-    async def list_templates(self) -> List[TemplateOut]:
+    async def list_templates(self) -> List[TemplateHabitOut]:
         tmpls = await self.repo.list_templates()
-        return [TemplateOut.from_orm(t) for t in tmpls]
+        return [TemplateHabitOut.model_validate(t.model_dump(by_alias=True)) for t in tmpls]
 
-    async def create_template(self, payload: TemplateCreate, actor) -> TemplateOut:
+    async def create_template(self, payload: TemplateHabitCreate, actor) -> TemplateHabitOut:
         if actor.role != "admin":
             raise HTTPException(status_code=403, detail="Not authorized")
-        tmpl = await self.repo.create_template(payload.dict())
-        return TemplateOut.from_orm(tmpl)
+        data = payload.model_dump()
+        tmpl = await self.repo.create_template(data)
+        data2 = tmpl.model_dump(by_alias=True)
+        if isinstance(tmpl.goal, Goal):
+            data2["goal"] = tmpl.goal.model_dump()
+        return TemplateHabitOut.model_validate(data2)
 
     async def update_template(
-        self, template_id: str, changes: TemplateUpdate, actor
-    ) -> TemplateOut:
+        self, template_id: str, changes: TemplateHabitUpdate, actor
+    ) -> TemplateHabitOut:
         if actor.role != "admin":
             raise HTTPException(status_code=403, detail="Not authorized")
         tmpl = await self.repo.get_template(template_id)
@@ -121,7 +126,7 @@ class HabitsService:
         updated = await self.repo.update_template(
             tmpl, changes.dict(exclude_unset=True)
         )
-        return TemplateOut.from_orm(updated)
+        return TemplateHabitOut.model_validate(updated)
 
     async def delete_template(self, template_id: str, actor) -> None:
         if actor.role != "admin":

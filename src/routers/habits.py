@@ -3,9 +3,9 @@ from typing import List
 
 from schemas.habits import HabitCreate, HabitUpdate, HabitOut, HabitProgress
 from schemas.templates import (
-    TemplateUpdate,
-    TemplateCreate,
-    TemplateOut,
+    TemplateHabitCreate,
+    TemplateHabitOut,
+    TemplateHabitUpdate,
 )
 from apps.habits.habitsService import HabitsService
 from utils.dependencies import get_current_user
@@ -53,28 +53,28 @@ async def get_progress(
 
 # ----- CREAR PLANTILLA DE HÁBITO (ADMIN) -----
 # (ojo, creo que no se esta revisando que sea admin)
-@router.get("/templates", response_model=List[TemplateOut])
+@router.get("/templates", response_model=List[TemplateHabitOut])
 async def list_templates(
     user: TokenData = Depends(get_current_user),
-) -> List[TemplateOut]:
+) -> List[TemplateHabitOut]:
     return await service.list_templates()
 
 
 @router.post(
-    "/templates", response_model=TemplateOut, status_code=status.HTTP_201_CREATED
+    "/templates", response_model=TemplateHabitOut, status_code=status.HTTP_201_CREATED
 )
 async def create_template(
-    payload: TemplateCreate, user: TokenData = Depends(get_current_user)
-) -> TemplateOut:
+    payload: TemplateHabitCreate, user: TokenData = Depends(get_current_user)
+) -> TemplateHabitOut:
     return await service.create_template(payload, user)
 
 
-@router.patch("/templates/{template_id}", response_model=TemplateOut)
+@router.patch("/templates/{template_id}", response_model=TemplateHabitOut)
 async def update_template(
     template_id: str,
-    payload: TemplateUpdate,
+    payload: TemplateHabitUpdate,
     user: TokenData = Depends(get_current_user),
-) -> TemplateOut:
+) -> TemplateHabitOut:
     return await service.update_template(template_id, payload, user)
 
 

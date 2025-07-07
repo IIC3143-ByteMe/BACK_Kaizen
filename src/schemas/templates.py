@@ -1,5 +1,4 @@
-from typing import Optional, Annotated
-from datetime import datetime
+from typing import List, Optional
 from bson import ObjectId
 from pydantic import (
     BaseModel,
@@ -9,67 +8,63 @@ from pydantic import (
     Field,
 )
 
+from schemas.schemas import Goal
 
-class TemplateCreate(BaseModel):
+
+class TemplateHabitCreate(BaseModel):
     title: str
-    description: str
+    description: Optional[str] = None
     icon: str
     color: str
-    grupo: Optional[str] = None
+    group: Optional[str] = None
     type: str
-    goal_period: str
-    goal_value: int
-    goal_value_unit: str
-    task_days: str
-    reminders: str
-    ikigai_category: str
-    published: bool
+
+    goal: Goal
+    task_days: List[str]
+    reminders: List[str]
 
 
-class TemplateUpdate(BaseModel):
+class TemplateHabitUpdate(BaseModel):
     title: Optional[str] = None
     description: Optional[str] = None
     icon: Optional[str] = None
     color: Optional[str] = None
-    grupo: Optional[str] = None
+    group: Optional[str] = None
     type: Optional[str] = None
-    goal_period: Optional[str] = None
-    goal_value: Optional[int] = None
-    goal_value_unit: Optional[str] = None
-    task_days: Optional[str] = None
-    reminders: Optional[str] = None
-    ikigai_category: Optional[str] = None
-    published: Optional[bool] = None
+
+    goal: Optional[Goal] = None
+    task_days: Optional[List[str]] = None
+    reminders: Optional[List[str]] = None
 
 
-class TemplateOut(BaseModel):
+class TemplateHabitOut(BaseModel):
     model_config = ConfigDict(
         from_attributes=True,
-        populate_by_name=True,
     )
 
-    id: Annotated[str, Field(alias="_id")]
+    id: str = Field(alias="_id")
     title: str
-    description: str
+    description: Optional[str]
     icon: str
     color: str
-    grupo: Optional[str]
+    group: Optional[str]
     type: str
-    goal_period: str
-    goal_value: int
-    goal_value_unit: str
-    task_days: str
-    reminders: str
-    ikigai_category: str
-    published: bool
-    created_at: datetime
+    goal: Goal
+    task_days: List[str]
+    reminders: List[str]
 
     @field_validator("id", mode="before")
-    def _coerce_objectid(cls, v):
-        if isinstance(v, ObjectId):
-            return str(v)
-        return v
+    def _coerce_id(cls, v):
+        return str(v) if isinstance(v, ObjectId) else v
 
-    @field_serializer("id")
-    def serialize_id(self, v):
-        return str(v)
+    @field_validator("goal", mode="before")
+    def _unpack_goal(cls, v):
+        if hasattr(v, "model_dump"):
+            return v.model_dump()
+        if isinstance(v, dict):
+            return v
+        return getattr(v, "__dict__", v)
+
+    @field_serializer("goal", mode="plain")
+    def _serialize_goal(v: Goal, info):
+        return v.model_dump()
