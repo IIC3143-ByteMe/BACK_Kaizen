@@ -25,7 +25,6 @@ async def get_ikigai_content(
 async def update_ikigai_content(
     payload: IkigaiEducationUpdate, user: TokenData = Depends(get_current_user)
 ) -> IkigaiEducation:
-    print(payload)
     return await service.update_content(payload, user)
 
 

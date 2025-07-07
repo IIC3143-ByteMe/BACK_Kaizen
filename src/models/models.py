@@ -192,3 +192,36 @@ class HabitsCalendar(Document):
     class Config:
         arbitrary_types_allowed = True
         json_encoders = {ObjectId: str}
+
+
+class JournalQuestion(Document):
+    date: date
+    question: str
+
+    class Settings:
+        name = "journal_question"
+
+    class Config:
+        arbitrary_types_allowed = True
+        json_encoders = {ObjectId: str}
+
+
+class JournalEntry(BaseModel):
+    date: date
+    entry: str
+
+    class Config:
+        arbitrary_types_allowed = True
+        json_encoders = {ObjectId: str}
+
+
+class Journal(Document):
+    user_id: ObjectId
+    entries: List[JournalEntry] = []
+
+    class Settings:
+        name = "journal"
+
+    class Config:
+        arbitrary_types_allowed = True
+        json_encoders = {ObjectId: str}
