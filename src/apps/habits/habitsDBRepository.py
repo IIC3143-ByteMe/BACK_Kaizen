@@ -27,7 +27,7 @@ class HabitsRepository:
         await habit.delete()
 
     async def list_templates(self) -> List[HabitTemplate]:
-        return await HabitTemplate.find(HabitTemplate.published).to_list()
+        return await HabitTemplate.find().to_list()
 
     async def create_template(self, data: dict) -> HabitTemplate:
         tmpl = HabitTemplate(**data)

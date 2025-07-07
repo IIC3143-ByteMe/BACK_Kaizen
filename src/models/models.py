@@ -115,16 +115,25 @@ class HabitTemplate(Document):
     description: str
     icon: str
     color: str
-    grupo: Optional[str] = None
+    group: Optional[str] = None
     type: str
-    goal_period: str
-    goal_value: int
-    goal_value_unit: str
-    task_days: str
-    reminders: str
-    ikigai_category: str
-    published: bool = Field(default=False)
+
+    goal: Goal
+    task_days: List[str]
+    reminders: List[str]
     created_at: datetime = Field(default_factory=datetime.utcnow)
+
+    model_config = ConfigDict(
+        arbitrary_types_allowed=True, json_encoders={ObjectId: str}
+    )
+
+    @field_validator("goal", mode="before")
+    def _convert_goal(cls, v):
+        if isinstance(v, dict):
+            return Goal(**v)
+        if isinstance(v, Goal):
+            return v
+        raise ValueError("goal must be a dict or Goal instance")
 
     class Settings:
         name = "habit_templates"
