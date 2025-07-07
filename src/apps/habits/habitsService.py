@@ -32,10 +32,15 @@ class HabitsService:
             "Te entregaré la descripción de un habito a mejorar por un usuario y"
             " lo tienes que categorizar en solo un"
             "area del ikigai."
-            "Las categorías posibles son: 1.-passion 2.-vocation"
-            " 3.-mission 4.-profession"
+            "Las categorías posibles son: "
+            "- passion "
+            "- vocation"
+            "- mission"
+            "- profession"
             "Tienes que solo contestar con la categoría asignada,"
-            " sin ninguna otra palabra."
+            " SIN NINGUNA OTRA PALABRA." \
+            "Es necesario que las palabras estén minusculas o sino me van a matar" \
+            "y tal como te las escribí."
             "El hábito a categorizar es el siguiente:"
             f'title: {data["title"]}'
             f'description: {data["description"]}'
@@ -44,7 +49,7 @@ class HabitsService:
         )
 
         ikigai_category = client.models.generate_content(
-            model="gemini-2.5-flash", contents=prompt
+            model="gemini-2.5-flash", contents=prompt,
         ).text
 
         data["owner_id"] = owner_id
