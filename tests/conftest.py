@@ -9,7 +9,7 @@ from motor.motor_asyncio import AsyncIOMotorClient
 from beanie import init_beanie
 
 from main import app
-from models.models import User, Habit, DailyHabitLog, HabitTemplate, DailyCompletions
+from models.models import User, Habit, HabitTemplate, DailyCompletions
 from utils.auth_utils import get_password_hash
 from jose import jwt
 from utils.auth_utils import SECRET_KEY, ALGORITHM
@@ -42,7 +42,6 @@ def init_db():
             document_models=[
                 User,
                 Habit,
-                DailyHabitLog,
                 HabitTemplate,
                 DailyCompletions,
             ],
@@ -103,7 +102,6 @@ async def clean_db():
     # Limpiar todas las colecciones
     await User.delete_all()
     await Habit.delete_all()
-    await DailyHabitLog.delete_all()
     await HabitTemplate.delete_all()
 
     yield
@@ -111,7 +109,6 @@ async def clean_db():
     # Limpiar después del test también
     await User.delete_all()
     await Habit.delete_all()
-    await DailyHabitLog.delete_all()
     await HabitTemplate.delete_all()
 
     client.close()

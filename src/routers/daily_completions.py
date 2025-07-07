@@ -23,7 +23,7 @@ async def get_or_create_daily_completion(
 
     habits = await Habit.find({"owner_id": ObjectId(user_id)}).to_list()
     if not habits:
-        raise HTTPException(status_code=404, detail="No habits found for this user")
+        return []
 
     completions = []
     for h in habits:

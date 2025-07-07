@@ -1,7 +1,7 @@
 from typing import List, Optional
 
 from beanie import PydanticObjectId
-from models.models import Habit, DailyHabitLog, HabitTemplate
+from models.models import Habit, HabitTemplate
 
 
 class HabitsRepository:
@@ -45,8 +45,3 @@ class HabitsRepository:
 
     async def delete_template(self, tmpl: HabitTemplate) -> None:
         await tmpl.delete()
-
-    async def get_logs(self, user_id: str, habit_id: str) -> List[DailyHabitLog]:
-        return await DailyHabitLog.find(
-            (DailyHabitLog.user_id == user_id) & (DailyHabitLog.habit_id == habit_id)
-        ).to_list()
