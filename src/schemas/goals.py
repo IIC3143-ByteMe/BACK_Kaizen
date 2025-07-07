@@ -4,7 +4,7 @@ from pydantic import (
 
 
 class Goal(BaseModel):
-    period: str
-    type: str
-    target: int
+    period: str # daily
+    type: str # check, sum, slide
+    target: int 
     unit: str

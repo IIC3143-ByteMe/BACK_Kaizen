@@ -1,6 +1,8 @@
-from fastapi import APIRouter, Depends, status
+from bson import ObjectId
+from fastapi import APIRouter, Depends, HTTPException, status
 from typing import List
 
+from models.models import Habit
 from schemas.habits import HabitCreate, HabitUpdate, HabitOut, HabitProgress
 from schemas.templates import (
     TemplateHabitCreate,
@@ -27,6 +29,19 @@ async def create_habit(
 async def list_habits(user: TokenData = Depends(get_current_user)) -> List[HabitOut]:
     return await service.list_habits(user)
 
+@router.get("/{habit_id}", response_model=HabitOut)
+async def get_habit(habit_id: str, user: TokenData = Depends(get_current_user)) -> HabitOut:
+    try:
+        habit_obj_id = ObjectId(habit_id)
+    except Exception:
+        raise HTTPException(status_code=400, detail="Invalid habit id format")
+    habit = await Habit.get(habit_obj_id)
+    print("Buscando id:", habit_id)
+    print("Resultado:", habit)
+    print(vars(user))
+    if not habit or str(habit.owner_id) != str(user.user_id):
+        raise HTTPException(status_code=404, detail="Habit not found")
+    return habit
 
 @router.put("/{habit_id}", response_model=HabitOut)
 async def update_habit(
