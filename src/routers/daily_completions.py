@@ -2,11 +2,45 @@ from bson import ObjectId
 from fastapi import APIRouter, Body, Depends, HTTPException
 from models.models import DailyCompletions, Habit, UpdateProgressInput
 from datetime import date, datetime
+from routers.monthy_bucket import HabitsCalendarSchema, CalendarDayStats
 
 from schemas.roles import TokenData
 from utils.dependencies import get_current_user
 
 router = APIRouter()
+
+
+async def update_calendar_day_stats(user_id, day, completions):
+    year, month = day.year, day.month
+    completed_count = sum(1 for c in completions if c.completed)
+    total_habits = len(completions)
+    completion_rate = completed_count / total_habits if total_habits else 0.0
+
+    calendar = await HabitsCalendarSchema.find_one(
+        {"user_id": ObjectId(user_id), "year": year, "month": month}
+    )
+    if not calendar:
+        calendar = HabitsCalendarSchema(
+            user_id=ObjectId(user_id), year=year, month=month, days=[]
+        )
+    found = False
+    for day_stat in calendar.days:
+        if day_stat.day == day:
+            day_stat.completed_count = completed_count
+            day_stat.total_habits = total_habits
+            day_stat.completion_rate = completion_rate
+            found = True
+            break
+    if not found:
+        calendar.days.append(
+            CalendarDayStats(
+                day=day,
+                completed_count=completed_count,
+                total_habits=total_habits,
+                completion_rate=completion_rate,
+            )
+        )
+    await calendar.save()
 
 
 @router.post("/daily-completions/")
@@ -91,6 +125,8 @@ async def update_completion_progress(
     )
     dc.day_completed = all([c.completed for c in dc.completions])
     await dc.save()
+    await update_calendar_day_stats(user_id, dc.date, dc.completions)
+
     return dc
 
 
