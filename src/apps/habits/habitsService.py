@@ -50,8 +50,7 @@ class HabitsService:
         )
 
         ikigai_category = client.models.generate_content(
-            model="gemini-2.5-flash",
-            contents=prompt
+            model="gemini-2.5-flash", contents=prompt
         ).text
 
         data["owner_id"] = owner_id
@@ -103,9 +102,13 @@ class HabitsService:
 
     async def list_templates(self) -> List[TemplateHabitOut]:
         tmpls = await self.repo.list_templates()
-        return [TemplateHabitOut.model_validate(t.model_dump(by_alias=True)) for t in tmpls]
+        return [
+            TemplateHabitOut.model_validate(t.model_dump(by_alias=True)) for t in tmpls
+        ]
 
-    async def create_template(self, payload: TemplateHabitCreate, actor) -> TemplateHabitOut:
+    async def create_template(
+        self, payload: TemplateHabitCreate, actor
+    ) -> TemplateHabitOut:
         if actor.role != "admin":
             raise HTTPException(status_code=403, detail="Not authorized")
         data = payload.model_dump()
