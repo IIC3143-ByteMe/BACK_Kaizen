@@ -54,16 +54,13 @@ async def get_or_create_daily_completion(
     )
     if existing:
         return existing
-    
+
     weekday = date.strftime("%a")
 
     habits = await Habit.find(
-        {
-            "owner_id": ObjectId(user_id),
-            "task_days": weekday
-        }
+        {"owner_id": ObjectId(user_id), "task_days": weekday}
     ).to_list()
-    
+
     if not habits:
         return []
 
