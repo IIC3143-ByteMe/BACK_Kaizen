@@ -163,11 +163,13 @@ class UpdateProgressInput(BaseModel):
     date: date
     progress: float
 
+
 class CalendarDayStats(BaseModel):
     day: date
     completed_count: int
     total_habits: int
     completion_rate: float
+
 
 class HabitsCalendar(Document):
     user_id: ObjectId
