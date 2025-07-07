@@ -1,6 +1,7 @@
 from typing import List, Optional
 
 from beanie import PydanticObjectId
+from bson import ObjectId
 from models.models import Habit, HabitTemplate
 
 
@@ -45,3 +46,10 @@ class HabitsRepository:
 
     async def delete_template(self, tmpl: HabitTemplate) -> None:
         await tmpl.delete()
+
+    async def get_habit_by_id(self, habit_id: str):
+        try:
+            _id = ObjectId(habit_id)
+        except Exception:
+            _id = habit_id
+        return await Habit.find_one({"_id": _id})

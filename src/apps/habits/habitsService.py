@@ -138,3 +138,10 @@ class HabitsService:
         if not tmpl:
             raise HTTPException(status_code=404, detail="Template not found")
         await self.repo.delete_template(tmpl)
+
+    
+    async def get_habit(self, habit_id: str, user_id: str):
+        habit = await self.repo.get_habit_by_id(habit_id)
+        if habit and str(habit.owner_id) == str(user_id):
+            return habit
+        return None

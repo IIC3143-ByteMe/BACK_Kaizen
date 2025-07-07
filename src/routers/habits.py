@@ -1,6 +1,7 @@
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends, HTTPException, status
 from typing import List
 
+from models.models import Habit
 from schemas.habits import HabitCreate, HabitUpdate, HabitOut, HabitProgress
 from schemas.templates import (
     TemplateHabitCreate,
@@ -42,6 +43,16 @@ async def update_habit(
 async def delete_habit(habit_id: str, user: TokenData = Depends(get_current_user)):
     await service.delete_habit(habit_id)
     return None
+
+@router.get("/{habit_id}", response_model=HabitOut)
+async def get_habit(
+    habit_id: str, user: TokenData = Depends(get_current_user)
+):
+    habit = await service.get_habit(habit_id, user.user_id)
+    if not habit:
+        from fastapi import HTTPException
+        raise HTTPException(status_code=404, detail="Habit not found")
+    return habit
 
 
 @router.get("/progress", response_model=List[HabitProgress])

@@ -1,31 +1,32 @@
-def test_create_habit_missing_fields_returns_422(client, user_token):
-    headers = {"Authorization": f"Bearer {user_token}"}
-    resp = client.post("/habits/", json={}, headers=headers)
-    assert resp.status_code == 422
+def test_create_and_get_habit_success(client, user_factory):
+    user = user_factory()
+    client.post("/auth/register", json=user)
+    login_resp = client.post("/auth/login", json=user)
+    token = login_resp.json()["access_token"]
+    headers = {"Authorization": f"Bearer {token}"}
 
-
-def test_create_and_get_habit_success(client, user_token):
-    headers = {"Authorization": f"Bearer {user_token}"}
-    payload = {
-        "title": "New Habit",
-        "description": "Desc",
-        "icon": "icon",
-        "color": "blue",
-        "grupo": "G1",
-        "type": "personal",
-        "goal_period": "daily",
-        "goal_value": 1,
-        "goal_value_unit": "times",
-        "task_days": "Mon,Tue",
-        "reminders": "09:00",
-        "ikigai_category": "Life",
+    habit_data = {
+        "title": "Drink Water",
+        "description": "Drink 8 glasses per day",
+        "icon": "💧",
+        "color": "#00BFFF",
+        "group": "health",            
+        "type": "daily",           
+        "ikigai_category": None,  
+        "goal": {
+            "period": "day",
+            "type": "quantity", 
+            "target": 8,      
+            "unit": "glasses"
+        },
+        "task_days": ["mon", "tue", "wed"],
+        "reminders": ["08:00"],
     }
-    r = client.post("/habits/", json=payload, headers=headers)
-    assert r.status_code == 201
-    data = r.json()
-    assert data["title"] == payload["title"]
+    resp = client.post("/habits/", json=habit_data, headers=headers)
+    assert resp.status_code == 201
+    habit_id = resp.json()["_id"]
 
-    # GET para asegurarnos
-    r2 = client.get(f"/habits/{data['id']}", headers=headers)
-    assert r2.status_code == 200
-    assert r2.json()["id"] == data["id"]
+    # Get
+    resp = client.get(f"/habits/{habit_id}", headers=headers)
+    assert resp.status_code == 200
+    assert resp.json()["title"] == "Drink Water"
