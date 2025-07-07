@@ -123,7 +123,26 @@ async def update_completion_progress(
             break
 
     if not found:
-        raise HTTPException(status_code=404, detail="Habit not found in completions")
+        from models.models import Habit
+
+        habit = await Habit.find_one(
+            {"_id": ObjectId(data.habit_id), "owner_id": ObjectId(user_id)}
+        )
+        if not habit:
+            raise HTTPException(status_code=404, detail="Habit not found")
+
+        goal = habit.goal
+        target = goal.target if hasattr(goal, "target") else 1
+        percentage = float(data.progress) / float(target) if target else 0.0
+        completion = type(dc.completions[0])(
+            habit_id=habit.id,
+            title=habit.title,
+            goal=goal,
+            progress=float(data.progress),
+            percentage=percentage,
+            completed=percentage >= 1.0,
+        )
+        dc.completions.append(completion)
 
     dc.overall_percentage = sum([c.percentage for c in dc.completions]) / len(
         dc.completions
