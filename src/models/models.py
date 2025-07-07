@@ -110,17 +110,6 @@ class Habit(Document):
         name = "habits"
 
 
-class DailyHabitLog(Document):
-    user_id: str  # ID del User que registra
-    habit_id: str  # ID del Habit que está registrando
-    date: datetime
-    completed: bool = False
-    notes: Optional[str] = None
-
-    class Settings:
-        name = "daily_habit_logs"
-
-
 class HabitTemplate(Document):
     title: str
     description: str
@@ -173,3 +162,24 @@ class UpdateProgressInput(BaseModel):
     habit_id: str
     date: date
     progress: float
+
+
+class CalendarDayStats(BaseModel):
+    day: date
+    completed_count: int
+    total_habits: int
+    completion_rate: float
+
+
+class HabitsCalendar(Document):
+    user_id: ObjectId
+    year: int
+    month: int
+    days: List[CalendarDayStats] = Field(default_factory=list)
+
+    class Settings:
+        name = "habits_calendar"
+
+    class Config:
+        arbitrary_types_allowed = True
+        json_encoders = {ObjectId: str}
