@@ -38,8 +38,8 @@ class HabitsService:
             "- mission"
             "- profession"
             "Tienes que solo contestar con la categoría asignada,"
-            " SIN NINGUNA OTRA PALABRA." \
-            "Es necesario que las palabras estén minusculas o sino me van a matar" \
+            " SIN NINGUNA OTRA PALABRA."
+            "Es necesario que las palabras estén minusculas o sino me van a matar"
             "y tal como te las escribí."
             "El hábito a categorizar es el siguiente:"
             f'title: {data["title"]}'
@@ -49,13 +49,14 @@ class HabitsService:
         )
 
         ikigai_category = client.models.generate_content(
-            model="gemini-2.5-flash", contents=prompt, 
+            model="gemini-2.5-flash",
+            contents=prompt,
             generation_config={
                 "temperature": 0.8,
                 "top_p": 1.0,
                 "top_k": 40,
-                "max_output_tokens": 512
-            }
+                "max_output_tokens": 512,
+            },
         ).text
 
         data["owner_id"] = owner_id
