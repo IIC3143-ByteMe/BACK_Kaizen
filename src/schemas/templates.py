@@ -8,7 +8,7 @@ from pydantic import (
     Field,
 )
 
-from schemas.schemas import Goal
+from schemas.goals import Goal
 
 
 class TemplateHabitCreate(BaseModel):
