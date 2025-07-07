@@ -10,6 +10,7 @@ from pydantic import (
 
 from schemas.goals import Goal
 
+
 class TemplateHabitCreate(BaseModel):
     title: str
     description: Optional[str] = None
