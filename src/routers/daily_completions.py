@@ -2,7 +2,7 @@ from bson import ObjectId
 from fastapi import APIRouter, Body, Depends, HTTPException
 from models.models import DailyCompletions, Habit, UpdateProgressInput
 from datetime import date, datetime
-from routers.monthy_bucket import HabitsCalendarSchema, CalendarDayStats
+from routers.monthly_bucket import HabitsCalendarSchema, CalendarDayStats
 
 from schemas.roles import TokenData
 from utils.dependencies import get_current_user

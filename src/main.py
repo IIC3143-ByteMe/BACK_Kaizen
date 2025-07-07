@@ -18,7 +18,7 @@ from routers.ikigai import router as ikigai_router
 from routers.admin import router as admin_router
 from routers.user import router as user_router
 from routers.daily_completions import router as daily_completion_router
-from routers.monthy_bucket import router as monthly_bucket_router
+from routers.monthly_bucket import router as monthly_bucket_router
 
 load_dotenv()
 app = FastAPI()
