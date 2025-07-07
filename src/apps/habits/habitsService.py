@@ -50,13 +50,7 @@ class HabitsService:
 
         ikigai_category = client.models.generate_content(
             model="gemini-2.5-flash",
-            contents=prompt,
-            generation_config={
-                "temperature": 0.8,
-                "top_p": 1.0,
-                "top_k": 40,
-                "max_output_tokens": 512,
-            },
+            contents=prompt
         ).text
 
         data["owner_id"] = owner_id
