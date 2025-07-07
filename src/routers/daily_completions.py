@@ -115,7 +115,7 @@ async def update_completion_progress(
     )
     dc.day_completed = all([c.completed for c in dc.completions])
     await dc.save()
-    # await update_calendar_day_stats(user_id, dc.date, dc.completions)
+    await update_calendar_day_stats(user_id, dc.date, dc.completions)
 
     return dc
 
