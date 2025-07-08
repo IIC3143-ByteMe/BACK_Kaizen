@@ -24,6 +24,18 @@ async def create_habit(
 ):
     return await service.create_habit(payload, user.user_id)
 
+@router.get("/progress", response_model=List[HabitProgress])
+async def get_progress(
+    user: TokenData = Depends(get_current_user),
+) -> List[HabitProgress]:
+    return await service.get_progress(user.user_id)
+
+
+@router.get("/templates", response_model=List[TemplateHabitOut])
+async def list_templates(
+    user: TokenData = Depends(get_current_user),
+) -> List[TemplateHabitOut]:
+    return await service.list_templates()
 
 @router.get("/{habit_id}")
 async def get_habit(habit_id: str):
@@ -71,20 +83,6 @@ async def delete_habit(habit_id: str, user: TokenData = Depends(get_current_user
             )
             await daily_completion.save()
     return None
-
-
-@router.get("/progress", response_model=List[HabitProgress])
-async def get_progress(
-    user: TokenData = Depends(get_current_user),
-) -> List[HabitProgress]:
-    return await service.get_progress(user.user_id)
-
-
-@router.get("/templates", response_model=List[TemplateHabitOut])
-async def list_templates(
-    user: TokenData = Depends(get_current_user),
-) -> List[TemplateHabitOut]:
-    return await service.list_templates()
 
 
 @router.post(
