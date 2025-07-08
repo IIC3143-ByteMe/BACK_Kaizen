@@ -11,10 +11,8 @@ service = UserService()
 async def get_user_info(user: TokenData = Depends(get_current_user)) -> UserOut:
     return await service.get_user_info(user)
 
+
 @router.get("/streak")
 async def get_streak(user_data: TokenData = Depends(get_current_user)):
     user = await service.get_user_info(user_data)
-    return {
-        "streak": user.streak,
-        "last_timestamp": user.last_timestamp
-    }
+    return {"streak": user.streak, "last_timestamp": user.last_timestamp}
