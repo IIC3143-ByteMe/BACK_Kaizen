@@ -24,6 +24,7 @@ async def create_habit(
 ):
     return await service.create_habit(payload, user.user_id)
 
+
 @router.get("/progress", response_model=List[HabitProgress])
 async def get_progress(
     user: TokenData = Depends(get_current_user),
@@ -36,6 +37,7 @@ async def list_templates(
     user: TokenData = Depends(get_current_user),
 ) -> List[TemplateHabitOut]:
     return await service.list_templates()
+
 
 @router.get("/{habit_id}")
 async def get_habit(habit_id: str):
