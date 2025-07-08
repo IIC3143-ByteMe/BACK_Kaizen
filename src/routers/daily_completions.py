@@ -172,7 +172,7 @@ async def get_monthly_completion(
         end = datetime(start.year, start.month + 1, 1)
 
     completions = await DailyCompletions.find_many(
-        {"user_id": ObjectId(user.user_id), "date": {"$gte": start, "$lt": end}}
+        {"user_id": user.user_id, "date": {"$gte": start, "$lt": end}}
     ).to_list()
 
     return [h.model_dump() for h in completions]
