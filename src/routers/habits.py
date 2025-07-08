@@ -1,4 +1,3 @@
-from datetime import date
 from bson import ObjectId
 from fastapi import APIRouter, Depends, status
 from typing import List
