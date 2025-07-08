@@ -50,11 +50,15 @@ async def delete_habit(habit_id: str, user: TokenData = Depends(get_current_user
     )
     if daily_completion:
         initial_count = len(daily_completion.completions)
-        daily_completion.completions = [
-            c
-            for c in daily_completion.completions
-            if str(c.habit_id) != habit_id
-        ]
+        completion_to_remove = None
+        for completion in daily_completion.completions:
+            if str(completion.habit_id) == habit_id:
+                completion_to_remove = completion
+                break
+
+        if completion_to_remove:
+            daily_completion.completions.remove(completion_to_remove)
+
         if len(daily_completion.completions) < initial_count:
             daily_completion.overall_percentage = (
                 sum(c.percentage for c in daily_completion.completions)
