@@ -87,6 +87,4 @@ class JournalService:
         if not question:
             question = await self.create_daily_question()
 
-        print("AQUIIIIIII")
-        print(question)
         return JournalQuestionOut.model_validate(question.model_dump())

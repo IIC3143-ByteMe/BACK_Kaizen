@@ -23,9 +23,6 @@ class IkigaiDBRepository:
         self, user_id: str, changes: IkigaiEducation
     ) -> IkigaiEducation:
 
-        print("AQUIII")
-        print(changes)
-
         user = await User.get(user_id)
         await user.update(Set({User.ikigai: changes}))
         user = await User.get(user_id)
