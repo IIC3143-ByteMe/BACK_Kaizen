@@ -177,7 +177,5 @@ async def get_monthly_completion(
         & (DailyCompletions.date < end)
     ).to_list()
     if not obj:
-        raise HTTPException(
-            status_code=404, detail="No daily completion found for this user and date"
-        )
+        return []
     return [h.model_dump() for h in obj]
