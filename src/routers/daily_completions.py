@@ -1,6 +1,6 @@
 from bson import ObjectId
 from fastapi import APIRouter, Body, Depends, HTTPException
-from models.models import DailyCompletions, Habit, UpdateProgressInput
+from models.models import DailyCompletions, Habit, UpdateProgressInput, User
 from datetime import date, datetime
 
 from schemas.roles import TokenData
@@ -74,9 +74,12 @@ async def update_completion_progress(
         raise HTTPException(status_code=404, detail="DailyCompletions not found")
 
     found = False
+    just_completed = False
+
     for c in dc.completions:
         if str(c.habit_id) == data.habit_id:
             found = True
+            prev_completed = c.completed
             c.progress = float(data.progress)
             goal = c.goal
             target = 1
@@ -86,6 +89,8 @@ async def update_completion_progress(
                 target = getattr(goal, "target", 1) or 1
             c.percentage = float(c.progress) / float(target)
             c.completed = c.percentage >= 1.0
+            if not prev_completed and c.completed:
+                just_completed = True
             break
 
     if not found:
@@ -100,22 +105,32 @@ async def update_completion_progress(
         goal = habit.goal
         target = goal.target if hasattr(goal, "target") else 1
         percentage = float(data.progress) / float(target) if target else 0.0
+        completed = percentage >= 1.0
         completion = type(dc.completions[0])(
             habit_id=habit.id,
             title=habit.title,
             goal=goal,
             progress=float(data.progress),
             percentage=percentage,
-            completed=percentage >= 1.0,
+            completed=completed,
         )
         dc.completions.append(completion)
+        if completed:
+            just_completed = True
 
     dc.overall_percentage = sum([c.percentage for c in dc.completions]) / len(
         dc.completions
     )
     dc.day_completed = all([c.completed for c in dc.completions])
     await dc.save()
-    # await update_calendar_day_stats(user_id, dc.date, dc.completions)
+
+    if just_completed:
+        user_doc = await User.get(ObjectId(user.user_id))
+        if user_doc and (
+            user_doc.last_timestamp is None or user_doc.last_timestamp != date.today()
+        ):
+            user_doc.update_streak()
+            await user_doc.save()
 
     return dc
 

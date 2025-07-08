@@ -40,9 +40,25 @@ class User(Document):
     full_name: Optional[str] = None
     role: UserRole = UserRole.USER
     streak: int = 0
+    last_timestamp: Optional[date] = None
     ikigai_quiz_bool: bool = False
     ikigai: Optional[IkigaiEducation] = None
     created_at: datetime = Field(default_factory=datetime.utcnow)
+
+    def update_streak(self):
+        today = date.today()
+        if self.last_timestamp is None:
+            self.streak = 1
+        else:
+            days_diff = (today - self.last_timestamp).days
+            if days_diff == 0:
+                return False
+            elif days_diff == 1:
+                self.streak += 1
+            else:
+                self.streak = 1
+        self.last_timestamp = today
+        return True
 
     class Settings:
         name = "users"

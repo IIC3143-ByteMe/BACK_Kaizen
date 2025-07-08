@@ -18,7 +18,6 @@ from routers.ikigai import router as ikigai_router
 from routers.admin import router as admin_router
 from routers.user import router as user_router
 from routers.daily_completions import router as daily_completion_router
-from routers.monthly_bucket import router as monthly_bucket_router
 
 load_dotenv()
 app = FastAPI()
@@ -65,7 +64,6 @@ app.include_router(ikigai_router)
 app.include_router(admin_router)
 app.include_router(user_router)
 app.include_router(daily_completion_router)
-app.include_router(monthly_bucket_router)
 
 if __name__ == "__main__":
     uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
