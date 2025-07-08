@@ -171,10 +171,17 @@ async def get_monthly_completion(
     else:
         end = datetime(start.year, start.month + 1, 1)
 
-    obj = await DailyCompletions.find_many(
-        (DailyCompletions.user_id == ObjectId(user.user_id))
-        and (DailyCompletions.date >= start)
-        and (DailyCompletions.date < end)
+    try:
+        user_obj_id = ObjectId(user.user_id)
+    except Exception:
+        raise HTTPException(status_code=400, detail="ID de usuario inválido.")
+
+    completions = await DailyCompletions.find(
+        lambda doc: (
+            doc.user_id == user_obj_id and
+            doc.date >= start and
+            doc.date < end
+        )
     ).to_list()
 
-    return [h.model_dump() for h in obj]
+    return [h.model_dump() for h in completions]
