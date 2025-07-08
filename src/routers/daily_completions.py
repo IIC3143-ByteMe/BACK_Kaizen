@@ -166,12 +166,14 @@ async def get_monthly_completion(
 ):
     start = datetime.strptime(month, "%Y-%m")
 
-    completions = await DailyCompletions.find_many({"user_id": user.user_id}).to_list()
+    completions = await DailyCompletions.find_many(
+        DailyCompletions.user_id == ObjectId(user.user_id)
+    ).to_list()
 
-    # Filtrar en Python
     filtered = [
-        c for c in completions
+        c
+        for c in completions
         if c.date.year == start.year and c.date.month == start.month
     ]
 
-    return [c.model_dump() for c in filtered]
+    return filtered
