@@ -3,7 +3,7 @@ from datetime import date
 from schemas.daily_completions import (
     DailyCompletionsResponse,
     CompletionEntryResponse,
-)  # ← Ajusta el import
+)
 
 
 @pytest.mark.asyncio

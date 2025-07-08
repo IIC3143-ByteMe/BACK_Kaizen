@@ -19,7 +19,7 @@ class UserRole(str, Enum):
 
 
 class Goal(BaseModel):
-    period: str  # daily, weekly, monthly
+    period: str
     type: str
     target: int
     unit: str

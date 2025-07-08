@@ -27,7 +27,6 @@ def test_create_and_get_habit_success(client, user_token):
     data = r.json()
     assert data["title"] == payload["title"]
 
-    # GET para asegurarnos
     r2 = client.get(f"/habits/{data['_id']}", headers=headers)
     assert r2.status_code == 200
     assert r2.json()["_id"] == data["_id"]

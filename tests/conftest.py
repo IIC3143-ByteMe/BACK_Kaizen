@@ -15,7 +15,6 @@ from jose import jwt
 from utils.auth_utils import SECRET_KEY, ALGORITHM
 
 
-# — Exception handler para debug en todos los tests —
 @app.exception_handler(Exception)
 async def debug_exception_handler(request: Request, exc: Exception):
     import traceback
@@ -24,7 +23,6 @@ async def debug_exception_handler(request: Request, exc: Exception):
     return JSONResponse(500, {"detail": "Internal server error", "error": str(exc)})
 
 
-# — Base de datos de test (se ejecuta una vez por sesión) —
 @pytest.fixture(scope="session", autouse=True)
 def init_db():
     from dotenv import load_dotenv
@@ -51,14 +49,12 @@ def init_db():
     client.drop_database(db_name)
 
 
-# — Cliente HTTP para FastAPI —
 @pytest.fixture(scope="module")
 def client():
     with TestClient(app) as c:
         yield c
 
 
-# — Token de usuario normal —
 @pytest.fixture(scope="function")
 def user_token(client, user_factory):
     test_user = user_factory("pytest_user")
@@ -68,7 +64,6 @@ def user_token(client, user_factory):
     return resp.json()["access_token"]
 
 
-# — Token de usuario admin —
 @pytest.fixture(scope="function")
 def admin_token(client, admin_factory):
     test_admin = admin_factory("admin_user")
@@ -99,14 +94,12 @@ async def clean_db():
     client = AsyncIOMotorClient(mongo_uri)
     test_db = client[db_name]
 
-    # Limpiar todas las colecciones
     await User.delete_all()
     await Habit.delete_all()
     await HabitTemplate.delete_all()
 
     yield
 
-    # Limpiar después del test también
     await User.delete_all()
     await Habit.delete_all()
     await HabitTemplate.delete_all()
@@ -114,7 +107,6 @@ async def clean_db():
     client.close()
 
 
-# — Factories para crear datos únicos en cada test —
 @pytest.fixture
 def user_factory():
     """Factory para crear usuarios únicos"""
