@@ -196,20 +196,6 @@ class CalendarDayStats(BaseModel):
     completion_rate: float
 
 
-class HabitsCalendar(Document):
-    user_id: ObjectId
-    year: int
-    month: int
-    days: List[CalendarDayStats] = Field(default_factory=list)
-
-    class Settings:
-        name = "habits_calendar"
-
-    class Config:
-        arbitrary_types_allowed = True
-        json_encoders = {ObjectId: str}
-
-
 class JournalQuestion(Document):
     date: date
     question: str
