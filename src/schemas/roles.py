@@ -27,6 +27,7 @@ class UserOut(BaseModel):
     full_name: Optional[str]
     role: UserRole
     streak: int
+    last_timestamp: Optional[datetime] = None
     ikigai_quiz_bool: bool
     ikigai: Optional[IkigaiEducation]
     created_at: datetime
