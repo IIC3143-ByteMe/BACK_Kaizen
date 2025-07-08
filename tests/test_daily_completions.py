@@ -5,7 +5,6 @@ from schemas.daily_completions import (
     CompletionEntryResponse,
 )
 
-
 @pytest.mark.asyncio
 async def test_create_and_update_daily_completion(client, user_token, clean_db):
     headers = {"Authorization": f"Bearer {user_token}"}
@@ -30,28 +29,23 @@ async def test_create_and_update_daily_completion(client, user_token, clean_db):
     habit = resp.json()
     habit_id = habit["_id"]
 
-    # 1. POST daily completions (parsea la respuesta con tu schema)
     resp = client.post("/daily-completions/", json=str(today), headers=headers)
     assert resp.status_code in (200, 201), resp.json()
     daily = resp.json()
-    # VALIDACIÓN DE SCHEMA AQUÍ
     parsed_daily = DailyCompletionsResponse.model_validate(daily)
     assert any(c.habit_id == habit_id for c in parsed_daily.completions)
 
-    # 2. PATCH (actualizar progreso)
     progress_payload = {"habit_id": habit_id, "date": str(today), "progress": 1}
     resp = client.patch(
         "/daily-completions/update-progress", json=progress_payload, headers=headers
     )
     assert resp.status_code == 200, resp.json()
     daily_update = resp.json()
-    # VALIDACIÓN DE SCHEMA AQUÍ
     parsed_update = DailyCompletionsResponse.model_validate(daily_update)
     completion = next(c for c in parsed_update.completions if c.habit_id == habit_id)
     assert completion.completed is True
     assert completion.percentage >= 1.0
 
-    # 3. GET (verifica y valida schema)
     resp = client.get(f"/daily-completions/{today}", headers=headers)
     assert resp.status_code == 200, resp.json()
     daily_get = resp.json()
@@ -59,11 +53,9 @@ async def test_create_and_update_daily_completion(client, user_token, clean_db):
     assert parsed_get.date == today
     assert any(c.habit_id == habit_id for c in parsed_get.completions)
 
-    # 4. DELETE daily completion
     daily_id = daily_get["_id"] if "_id" in daily_get else daily_get["id"]
     resp = client.delete(f"/daily-completions/{daily_id}", headers=headers)
     assert resp.status_code == 204
 
-    # 5. GET de nuevo debe fallar (404)
     resp = client.get(f"/daily-completions/{today}", headers=headers)
     assert resp.status_code == 404
