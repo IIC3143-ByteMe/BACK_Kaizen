@@ -166,13 +166,12 @@ async def get_monthly_completion(
 ):
     start = datetime.strptime(month, "%Y-%m")
 
-    if start.month == 12:
-        end = datetime(start.year + 1, 1, 1)
-    else:
-        end = datetime(start.year, start.month + 1, 1)
+    completions = await DailyCompletions.find_many({"user_id": user.user_id}).to_list()
 
-    completions = await DailyCompletions.find_many(
-        {"user_id": user.user_id, "date": {"$gte": start, "$lt": end}}
-    ).to_list()
+    # Filtrar en Python
+    filtered = [
+        c for c in completions
+        if c.date.year == start.year and c.date.month == start.month
+    ]
 
-    return [h.model_dump() for h in completions]
+    return [c.model_dump() for c in filtered]
