@@ -149,3 +149,10 @@ async def get_daily_completion(
             status_code=404, detail="No daily completion found for this user and date"
         )
     return obj
+
+@router.delete("/daily-completions/{id}", status_code=204)
+async def delete_daily_completion(id: str, user: TokenData = Depends(get_current_user)):
+    obj = await DailyCompletions.get(ObjectId(id))
+    if obj and str(obj.user_id) == user.user_id:
+        await obj.delete()
+    return None

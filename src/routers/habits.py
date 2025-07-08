@@ -39,41 +39,27 @@ async def update_habit(
 ):
     habit = await service.update_habit(habit_id, habit_update, current_user)
     return habit
-
-
 @router.delete("/{habit_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_habit(habit_id: str, user: TokenData = Depends(get_current_user)):
     await service.delete_habit(habit_id)
-    today = date.today()
-    daily_completion = await DailyCompletions.find_one(
-        {"user_id": ObjectId(user.user_id), "date": today}
-    )
-    if daily_completion:
-        initial_count = len(daily_completion.completions)
-        completion_to_remove = None
-        for completion in daily_completion.completions:
-            if str(completion.habit_id) == habit_id:
-                completion_to_remove = completion
-                break
-
-        if completion_to_remove:
-            daily_completion.completions.remove(completion_to_remove)
-
-        if len(daily_completion.completions) < initial_count:
+    dailies = await DailyCompletions.find({"user_id": ObjectId(user.user_id)}).to_list()
+    for daily_completion in dailies:
+        completions_before = len(daily_completion.completions)
+        daily_completion.completions = [
+            c for c in daily_completion.completions if str(c.habit_id) != habit_id
+        ]
+        if len(daily_completion.completions) < completions_before:
             daily_completion.overall_percentage = (
                 sum(c.percentage for c in daily_completion.completions)
                 / len(daily_completion.completions)
-                if daily_completion.completions
-                else 0.0
+                if daily_completion.completions else 0.0
             )
             daily_completion.day_completed = (
                 all([c.completed for c in daily_completion.completions])
-                if daily_completion.completions
-                else False
+                if daily_completion.completions else False
             )
             await daily_completion.save()
     return None
-
 
 @router.get("/progress", response_model=List[HabitProgress])
 async def get_progress(
