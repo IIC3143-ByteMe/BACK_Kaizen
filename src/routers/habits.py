@@ -1,4 +1,3 @@
-from datetime import date
 from bson import ObjectId
 from fastapi import APIRouter, Depends, HTTPException, status
 from typing import List
@@ -24,6 +23,7 @@ async def create_habit(
     payload: HabitCreate, user: TokenData = Depends(get_current_user)
 ):
     return await service.create_habit(payload, user.user_id)
+
 
 @router.get("/{habit_id}")
 async def get_habit(habit_id: str):

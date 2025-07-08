@@ -1,6 +1,10 @@
 import pytest
 from datetime import date
-from schemas.daily_completions import DailyCompletionsResponse, CompletionEntryResponse  # ← Ajusta el import
+from schemas.daily_completions import (
+    DailyCompletionsResponse,
+    CompletionEntryResponse,
+)  # ← Ajusta el import
+
 
 @pytest.mark.asyncio
 async def test_create_and_update_daily_completion(client, user_token, clean_db):
@@ -16,14 +20,9 @@ async def test_create_and_update_daily_completion(client, user_token, clean_db):
         "group": "Health",
         "type": "daily",
         "ikigai_category": "body",
-        "goal": {
-            "period": "daily",
-            "type": "quantity",
-            "target": 1,
-            "unit": "L"
-        },
+        "goal": {"period": "daily", "type": "quantity", "target": 1, "unit": "L"},
         "task_days": [weekday],
-        "reminders": ["09:00"]
+        "reminders": ["09:00"],
     }
 
     resp = client.post("/habits/", json=habit_payload, headers=headers)
@@ -40,12 +39,10 @@ async def test_create_and_update_daily_completion(client, user_token, clean_db):
     assert any(c.habit_id == habit_id for c in parsed_daily.completions)
 
     # 2. PATCH (actualizar progreso)
-    progress_payload = {
-        "habit_id": habit_id,
-        "date": str(today),
-        "progress": 1
-    }
-    resp = client.patch("/daily-completions/update-progress", json=progress_payload, headers=headers)
+    progress_payload = {"habit_id": habit_id, "date": str(today), "progress": 1}
+    resp = client.patch(
+        "/daily-completions/update-progress", json=progress_payload, headers=headers
+    )
     assert resp.status_code == 200, resp.json()
     daily_update = resp.json()
     # VALIDACIÓN DE SCHEMA AQUÍ
