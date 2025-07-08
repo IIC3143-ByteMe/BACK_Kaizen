@@ -20,13 +20,14 @@ async def create_journal_entry(
 
 
 @router.get(
-    "/entry",
+    "/entry/{day}",
     response_model=Optional[JournalEntryOut],
     status_code=status.HTTP_201_CREATED,
 )
-async def get_entry(user: TokenData = Depends(get_current_user)):
-    today = datetime.combine(datetime.today().date(), datetime.min.time())
-    return await service.get_journal_entry_by_date(user, today)
+async def get_entry(day: str, user: TokenData = Depends(get_current_user)):
+    dt = datetime.strptime(day, "%Y-%m-%d").date()
+    consult_day = datetime.combine(dt, datetime.min.time())
+    return await service.get_journal_entry_by_date(user, consult_day)
 
 
 @router.get(
