@@ -2,7 +2,6 @@ from bson import ObjectId
 from fastapi import APIRouter, Body, Depends, HTTPException
 from models.models import DailyCompletions, Habit, UpdateProgressInput, User
 from datetime import date, datetime
-from beanie.operators import All
 
 from schemas.roles import TokenData
 from utils.dependencies import get_current_user
@@ -173,11 +172,9 @@ async def get_monthly_completion(
         end = datetime(start.year, start.month + 1, 1)
 
     obj = await DailyCompletions.find_many(
-        All(
-            DailyCompletions.user_id == ObjectId(user.user_id),
-            DailyCompletions.date >= start,
-            DailyCompletions.date < end,
-        )
+        (DailyCompletions.user_id == ObjectId(user.user_id))
+        and (DailyCompletions.date >= start)
+        and (DailyCompletions.date < end)
     ).to_list()
 
     return [h.model_dump() for h in obj]
