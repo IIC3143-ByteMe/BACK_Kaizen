@@ -1,6 +1,9 @@
+from datetime import date
+from bson import ObjectId
 from fastapi import APIRouter, Depends, status
 from typing import List
 
+from models.models import DailyCompletions
 from schemas.habits import HabitCreate, HabitUpdate, HabitOut, HabitProgress
 from schemas.templates import (
     TemplateHabitCreate,
@@ -41,6 +44,23 @@ async def update_habit(
 @router.delete("/{habit_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_habit(habit_id: str, user: TokenData = Depends(get_current_user)):
     await service.delete_habit(habit_id)
+    today = date.today()
+    daily_completion = await DailyCompletions.find_one({
+        "user_id": ObjectId(user.user_id),
+        "date": today
+    })
+    if daily_completion:
+        initial_count = len(daily_completion.completions)
+        daily_completion.completions = [
+            c for c in daily_completion.completions if str(getattr(c, "habit_id", "")) != habit_id
+        ]
+        if len(daily_completion.completions) < initial_count:
+            daily_completion.overall_percentage = (
+                sum(c.percentage for c in daily_completion.completions) / len(daily_completion.completions)
+                if daily_completion.completions else 0.0
+            )
+            daily_completion.day_completed = all([c.completed for c in daily_completion.completions]) if daily_completion.completions else False
+            await daily_completion.save()
     return None
 
 
