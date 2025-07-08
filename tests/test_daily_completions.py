@@ -5,6 +5,7 @@ from schemas.daily_completions import (
     CompletionEntryResponse,
 )
 
+
 @pytest.mark.asyncio
 async def test_create_and_update_daily_completion(client, user_token, clean_db):
     headers = {"Authorization": f"Bearer {user_token}"}
