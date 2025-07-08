@@ -149,3 +149,27 @@ async def get_daily_completion(
             status_code=404, detail="No daily completion found for this user and date"
         )
     return obj
+
+
+@router.get("/month-completions/{month}")
+async def get_monthly_completion(
+    month: str,
+    user: TokenData = Depends(get_current_user),
+):
+    start = datetime.strptime(month, "%Y-%m")
+
+    if start.month == 12:
+        end = datetime(start.year + 1, 1, 1)
+    else:
+        end = datetime(start.year, start.month + 1, 1)
+
+    obj = await DailyCompletions.find_many(
+        (DailyCompletions.user_id == ObjectId(user.user_id))
+        & (DailyCompletions.date >= start)
+        & (DailyCompletions.date < end)
+    ).to_list()
+    if not obj:
+        raise HTTPException(
+            status_code=404, detail="No daily completion found for this user and date"
+        )
+    return [h.model_dump() for h in obj]
