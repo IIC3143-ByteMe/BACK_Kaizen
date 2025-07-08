@@ -39,6 +39,8 @@ async def update_habit(
 ):
     habit = await service.update_habit(habit_id, habit_update, current_user)
     return habit
+
+
 @router.delete("/{habit_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_habit(habit_id: str, user: TokenData = Depends(get_current_user)):
     await service.delete_habit(habit_id)
@@ -52,14 +54,17 @@ async def delete_habit(habit_id: str, user: TokenData = Depends(get_current_user
             daily_completion.overall_percentage = (
                 sum(c.percentage for c in daily_completion.completions)
                 / len(daily_completion.completions)
-                if daily_completion.completions else 0.0
+                if daily_completion.completions
+                else 0.0
             )
             daily_completion.day_completed = (
                 all([c.completed for c in daily_completion.completions])
-                if daily_completion.completions else False
+                if daily_completion.completions
+                else False
             )
             await daily_completion.save()
     return None
+
 
 @router.get("/progress", response_model=List[HabitProgress])
 async def get_progress(

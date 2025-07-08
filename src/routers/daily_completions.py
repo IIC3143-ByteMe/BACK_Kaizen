@@ -150,6 +150,7 @@ async def get_daily_completion(
         )
     return obj
 
+
 @router.delete("/daily-completions/{id}", status_code=204)
 async def delete_daily_completion(id: str, user: TokenData = Depends(get_current_user)):
     obj = await DailyCompletions.get(ObjectId(id))
