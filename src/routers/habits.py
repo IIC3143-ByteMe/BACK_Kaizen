@@ -80,8 +80,6 @@ async def get_progress(
     return await service.get_progress(user.user_id)
 
 
-# ----- CREAR PLANTILLA DE HÁBITO (ADMIN) -----
-# (ojo, creo que no se esta revisando que sea admin)
 @router.get("/templates", response_model=List[TemplateHabitOut])
 async def list_templates(
     user: TokenData = Depends(get_current_user),

@@ -2,7 +2,6 @@ import pytest
 from jose import jwt
 from utils.auth_utils import create_access_token, SECRET_KEY, ALGORITHM
 
-# Aplica el fixture clean_db a todos los tests de este módulo
 pytestmark = pytest.mark.usefixtures("clean_db")
 
 
@@ -18,7 +17,7 @@ def test_register_success(client, user_factory):
 
 @pytest.mark.order(2)
 def test_register_missing_fields_returns_422(client):
-    bad_user = {"email": "", "password": ""}  # datos inválidos
+    bad_user = {"email": "", "password": ""}
     r = client.post("/auth/register", json=bad_user)
     assert r.status_code == 422
 
@@ -26,10 +25,8 @@ def test_register_missing_fields_returns_422(client):
 @pytest.mark.order(3)
 def test_register_duplicate_returns_400(client, user_factory):
     dup_user = user_factory("duplicate")
-    # Primer registro
     r1 = client.post("/auth/register", json=dup_user)
     assert r1.status_code == 201
-    # Segundo registro con misma info → 400
     r2 = client.post("/auth/register", json=dup_user)
     assert r2.status_code == 400
 
@@ -50,7 +47,6 @@ def test_login_invalid_password(client, user_factory):
     new_user = user_factory("wrongpass")
     client.post("/auth/register", json=new_user)
 
-    # Intentar login con password incorrecta
     wrong_creds = {"email": new_user["email"], "password": "WrongPassword123"}
     resp = client.post("/auth/login", json=wrong_creds)
     assert resp.status_code in (400, 401)
