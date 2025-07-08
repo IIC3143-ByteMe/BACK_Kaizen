@@ -49,9 +49,17 @@ class HabitsService:
             f'type {data["type"]}'
         )
 
-        ikigai_category = client.models.generate_content(
-            model="gemini-2.5-flash", contents=prompt
-        ).text
+        try:
+            ikigai_category = client.models.generate_content(
+                model="gemini-2.5-flash", contents=prompt
+            ).text
+        except Exception:
+            ikigai_category = "mission"
+
+        valid_categories = {"passion", "vocation", "mission", "profession"}
+
+        if ikigai_category not in valid_categories:
+            ikigai_category = "mission"
 
         data["owner_id"] = owner_id
         data["ikigai_category"] = ikigai_category
